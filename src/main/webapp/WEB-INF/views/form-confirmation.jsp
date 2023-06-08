@@ -13,7 +13,7 @@
   </head>
   <body>
     <header class="header--form-page">
-      <c:import url="fragments/header.jsp"/>
+      <c:import url="fragments/header-user.jsp"/>
     </header>
 
     <footer>
