@@ -13,9 +13,13 @@
   </head>
   <body>
     <header class="header--form-page">
-      <c:import url="fragments/header-user.jsp"/>
+      <c:if test="${not empty pageContext.request.userPrincipal}">
+        <c:import url="fragments/header-user.jsp"/>
+      </c:if>
+      <c:if test="${empty  pageContext.request.userPrincipal}">
+        <c:import url="fragments/header-user.jsp"/>
+      </c:if>
     </header>
-
     <section class="form--steps">
       <div class="form--steps-instructions">
         <div class="form--steps-container">
