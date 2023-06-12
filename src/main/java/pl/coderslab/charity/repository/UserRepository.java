@@ -5,5 +5,6 @@ import org.springframework.stereotype.Repository;
 import pl.coderslab.charity.model.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<Long, User> {
+public interface UserRepository extends JpaRepository<User, Long> {
+    org.springframework.security.core.userdetails.User findByEmail(String email);
 }

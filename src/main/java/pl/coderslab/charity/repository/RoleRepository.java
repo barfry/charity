@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import pl.coderslab.charity.model.Role;
 
 @Repository
-public interface RoleRepository extends JpaRepository<Long, Role> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 }
