@@ -15,7 +15,7 @@ public class Role {
     private Long id;
 
     @NotNull
-    @NotBlank(message = "This field can't be empty")
+    @NotBlank(message = "To pole nie może być puste")
     private String name;
 
     public Long getId() {

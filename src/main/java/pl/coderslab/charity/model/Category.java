@@ -17,8 +17,8 @@ public class Category {
     Long id;
 
     @NotNull
-    @NotBlank(message = "This field can't be empty")
-    @Length(min = 2, max = 30, message = "Category name must fit between 2 and 30 characters")
+    @NotBlank(message = "To pole nie może być puste")
+    @Length(min = 2, max = 30, message = "Nazwa kategorii musi zawierać się między 2 a 30 znakami")
     String name;
 
     public Long getId() {

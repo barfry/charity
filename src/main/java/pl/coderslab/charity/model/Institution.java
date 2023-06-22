@@ -17,13 +17,13 @@ public class Institution {
     private Long id;
 
     @NotNull
-    @NotBlank(message = "This field can't be empty")
-    @Length(min = 2, max = 30, message = "Name should")
+    @NotBlank(message = "To pole nie może być puste")
+    @Length(min = 2, max = 30, message = "Nazwa musi zawierać się między 2 a 30 znakami")
     private String name;
 
     @NotNull
-    @NotBlank(message = "This field can't be empty")
-    @Length(min = 2, max = 100, message = "Description must be between 2 and 100 characters")
+    @NotBlank(message = "To pole nie może być puste")
+    @Length(min = 2, max = 100, message = "Opis musi zawierać się między 2 a 100 znakami")
     private String description;
 
     public Long getId() {
