@@ -11,11 +11,20 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import pl.coderslab.charity.handler.UserNotVerifiedAuthenticationFailureHandler;
 import pl.coderslab.charity.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final UserService userService;
+    private final UserNotVerifiedAuthenticationFailureHandler authenticationFailureHandler;
+
+    public CharitySecurityConfig(UserService userService, UserNotVerifiedAuthenticationFailureHandler authenticationFailureHandler) {
+        this.userService = userService;
+        this.authenticationFailureHandler = authenticationFailureHandler;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -38,24 +47,22 @@ public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
+        auth.userDetailsService(userService);
     }
-
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/", "/login").permitAll()
+                .antMatchers("/", "/login", "/register", "/verify", "/login-error", "/user-not-verified").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
+                .failureHandler(authenticationFailureHandler)
                 .loginPage("/login")
                 .usernameParameter("email")
-                .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/", true)
-                .failureUrl("/login-error")
                 .and()
                 .logout()
                 .logoutSuccessUrl("/")
@@ -70,6 +77,5 @@ public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**","/vendor/**","/fonts/**");
     }
-
 
 }

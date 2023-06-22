@@ -1,41 +1,52 @@
 package pl.coderslab.charity.model;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-public class User {
+@Table(name = "user")
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
-    @NotBlank(message = "This field can't be empty")
-    @Length(min = 2, max = 30, message = "First name must fit between 2 and 30 characters")
+    @NotBlank(message = "To pole nie może być puste")
+    @Length(min = 2, max = 30, message = "Imię musi zawierać się między 2 a 30 znakami")
     private String firstName;
 
     @NotNull
-    @NotBlank(message = "This field can't be empty")
-    @Length(min = 2, max = 30, message = "Last name must fit between 2 and 30 characters")
+    @NotBlank(message = "To pole nie może być puste")
+    @Length(min = 2, max = 30, message = "Nazwisko musi zawierać się między 2 a 30 znakami")
     private String lastName;
 
     @NotNull
-    @NotBlank(message = "This field can't be empty")
-    @Email(message = "This field has to be in e-mail format - mail@domain.com")
-    @Column(unique = true)
+    @NotBlank(message = "To pole nie może być puste")
+    @Email(message = "To pole musi być w formacie e-mail np.: adres@domena.pl")
+    @Length(min = 5, max = 50, message = "E-mail musi zawierać się między 2 a 50 znakami")
+    @Column(name="email", unique = true)
     private String email;
 
     @NotNull
     @NotBlank
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,128}$", message="The password must contain from 6 up to 128 characters, at least 1 lowercase letter, 1 capital letter and 1 digit")
+    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{6,128}$", message="Hasło musi zawierać od 6 do 128 znaków, w tym przynajmniej 1 małą literę, 1 wielką literę oraz 1 cyfrę")
     private String password;
+
+    @Transient
+    private String confirmPassword;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns =
@@ -44,6 +55,10 @@ public class User {
     private Set<Role> roles;
 
     private Boolean enabled = true;
+
+    private String verificationToken;
+
+    private Boolean verified;
 
     public Long getId() {
         return id;
@@ -85,6 +100,14 @@ public class User {
         this.password = password;
     }
 
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
     public Set<Role> getRoles() {
         return roles;
     }
@@ -101,16 +124,77 @@ public class User {
         this.enabled = enabled;
     }
 
-    public User(Long id, String firstName, String lastName, String email, String password, Set<Role> roles, Boolean enabled) {
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public User(Long id, String firstName, String lastName, String email, String password, String confirmPassword, Set<Role> roles, Boolean enabled, String verificationToken, Boolean verified) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.confirmPassword = confirmPassword;
         this.roles = roles;
         this.enabled = enabled;
+        this.verificationToken = verificationToken;
+        this.verified = verified;
     }
 
     public User() {
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<Role> roles = getRoles();
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+        for(Role role : roles){
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        }
+
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    public boolean isVerified() {
+        return this.verified;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
 }

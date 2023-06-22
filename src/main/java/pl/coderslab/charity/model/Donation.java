@@ -15,8 +15,8 @@ public class Donation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Positive(message = "Quantity can't be less or equal 0")
-    @Digits(integer = 2, fraction = 0, message = "Quantity should be between a number between 1 and 99")
+    @Positive(message = "Ilość nie może być równa lub mniejsza niż 0")
+    @Digits(integer = 2, fraction = 0, message = "Ilość powinna wynosić pomiędzy 1 a 99")
     @NotNull
     private Integer quantity;
 
@@ -24,38 +24,39 @@ public class Donation {
     @JoinTable(name = "donation_categories", joinColumns =
         @JoinColumn(name = "donation_id"), inverseJoinColumns =
             @JoinColumn(name = "category_id"))
-    @NotNull
+    @NotNull(message = "Należy wybrać co najmniej jedną kategorię")
     private Set<Category> categorySet;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
-    @NotNull
+    @NotNull(message = "Należy wybrać instytucję")
     private Institution institution;
 
     @NotNull
-    @NotBlank(message = "Street field can't be empty")
-    @Length(min = 2, max = 20, message = "Street name has to fit between 2 and 20 characters")
+    @NotBlank(message = "To pole nie może być puste")
+    @Length(min = 2, max = 20, message = "Nazwa ulicy musi zawierać się między 2 a 20 znakami")
     private String street;
 
     @NotNull
-    @NotBlank(message = "City field can't be empty")
-    @Length(min = 2, max = 20, message = "City name has to fit between 2 and 20 characters")
+    @NotBlank(message = "To pole nie może być puste")
+    @Length(min = 2, max = 20, message = "Nazwa miasta musi zawierać się między 2 a 20 znakami")
     private String city;
 
     @NotNull
-    @NotBlank
-    @Pattern(regexp = "^[0-9]{2}-[0-9]{3}")
+    @NotBlank(message = "To pole nie może być puste")
+    @Pattern(regexp = "^[0-9]{2}-[0-9]{3}", message = "Należy wprowadzić format kodu pocztowego np.: 12-345")
     private String zipCode;
 
-    @NotNull(message = "Pick up date must be chosen")
-    @FutureOrPresent(message = "Field allows only present or future day")
+    @NotNull(message = "Należy wybrać datę odbioru")
+    @FutureOrPresent(message = "Należy wybrać wyłącznie datę dzisiejszą lub przyszłą")
     private LocalDate pickUpDate;
 
-    @NotNull(message = "Pick up time must be chosen")
+    @NotNull(message = "Należy wybrać godzinę odbioru")
     private LocalTime pickUpTime;
 
-    @NotNull(message = "This field can't be empty")
-    @Length(min = 3, max = 50, message = "Comment has to fit between 3 and 50 characters")
+    @NotNull
+    @NotBlank(message = "To pole nie może być puste")
+    @Length(min = 3, max = 50, message = "Komentarz musi zawierać się między 2 a 50 znakami")
     private String pickUpComment;
 
     public Long getId() {
