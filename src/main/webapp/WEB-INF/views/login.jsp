@@ -9,11 +9,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>Register form</title>
     <link rel="stylesheet" href="<c:url value="resources/css/style.css"/>"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-            crossorigin="anonymous"></script>
 </head>
 <body>
 <header>
@@ -23,10 +18,10 @@
 <section class="login-page">
     <h2>Zaloguj się</h2>
     <c:if test="${loginError}">
-    <p class="error">Niepoprawny e-mail lub hasło</p>
+    <p style="color: red">Niepoprawny e-mail lub hasło</p>
     </c:if>
     <c:if test="${verifiedError}">
-        <p class="error">E-mail nie został zweryfikowany</p>
+        <p style="color: red">E-mail nie został zweryfikowany</p>
     </c:if>
     <form action="/login" method="post">
         <div class="form-group">
@@ -38,7 +33,7 @@
         </div>
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <div class="form-group form-group--buttons">
-            <a href="#" class="btn btn--without-border">Załóż konto</a>
+            <a href="/register" class="btn btn--without-border">Załóż konto</a>
             <button class="btn" type="submit">Zaloguj się</button>
         </div>
     </form>

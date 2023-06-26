@@ -1,18 +1,20 @@
 package pl.coderslab.charity.model;
 
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Set;
+import java.util.List;
 
 @Entity
+@Table(name = "donation")
 public class Donation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Positive(message = "Ilość nie może być równa lub mniejsza niż 0")
@@ -25,7 +27,7 @@ public class Donation {
         @JoinColumn(name = "donation_id"), inverseJoinColumns =
             @JoinColumn(name = "category_id"))
     @NotNull(message = "Należy wybrać co najmniej jedną kategorię")
-    private Set<Category> categorySet;
+    private List<Category> categoryList;
 
     @ManyToOne
     @JoinColumn(name = "institution_id")
@@ -49,10 +51,16 @@ public class Donation {
 
     @NotNull(message = "Należy wybrać datę odbioru")
     @FutureOrPresent(message = "Należy wybrać wyłącznie datę dzisiejszą lub przyszłą")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate pickUpDate;
 
     @NotNull(message = "Należy wybrać godzinę odbioru")
     private LocalTime pickUpTime;
+
+    @NotNull
+    @NotBlank(message = "To pole nie może być puste")
+    @Pattern(regexp = "^[0-9]{9}$", message = "Numer telefonu powinien zawierać 9 cyfr")
+    private String phoneNumber;
 
     @NotNull
     @NotBlank(message = "To pole nie może być puste")
@@ -75,12 +83,12 @@ public class Donation {
         this.quantity = quantity;
     }
 
-    public Set<Category> getCategorySet() {
-        return categorySet;
+    public List<Category> getCategoryList() {
+        return categoryList;
     }
 
-    public void setCategorySet(Set<Category> categorySet) {
-        this.categorySet = categorySet;
+    public void setCategoryList(List<Category> categoryList) {
+        this.categoryList = categoryList;
     }
 
     public Institution getInstitution() {
@@ -131,6 +139,14 @@ public class Donation {
         this.pickUpTime = pickUpTime;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getPickUpComment() {
         return pickUpComment;
     }
@@ -139,16 +155,17 @@ public class Donation {
         this.pickUpComment = pickUpComment;
     }
 
-    public Donation(Long id, Integer quantity, Set<Category> categorySet, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String pickUpComment) {
+    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment) {
         this.id = id;
         this.quantity = quantity;
-        this.categorySet = categorySet;
+        this.categoryList = categoryList;
         this.institution = institution;
         this.street = street;
         this.city = city;
         this.zipCode = zipCode;
         this.pickUpDate = pickUpDate;
         this.pickUpTime = pickUpTime;
+        this.phoneNumber = phoneNumber;
         this.pickUpComment = pickUpComment;
     }
 

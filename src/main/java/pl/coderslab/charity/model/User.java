@@ -54,6 +54,9 @@ public class User implements UserDetails {
             @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Donation> donations;
+
     private Boolean enabled = true;
 
     private String verificationToken;
@@ -116,6 +119,14 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
+    public List<Donation> getDonations() {
+        return donations;
+    }
+
+    public void setDonations(List<Donation> donations) {
+        this.donations = donations;
+    }
+
     public Boolean getEnabled() {
         return enabled;
     }
@@ -140,7 +151,7 @@ public class User implements UserDetails {
         this.verificationToken = verificationToken;
     }
 
-    public User(Long id, String firstName, String lastName, String email, String password, String confirmPassword, Set<Role> roles, Boolean enabled, String verificationToken, Boolean verified) {
+    public User(Long id, String firstName, String lastName, String email, String password, String confirmPassword, Set<Role> roles, List<Donation> donations, Boolean enabled, String verificationToken, Boolean verified) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -148,6 +159,7 @@ public class User implements UserDetails {
         this.password = password;
         this.confirmPassword = confirmPassword;
         this.roles = roles;
+        this.donations = donations;
         this.enabled = enabled;
         this.verificationToken = verificationToken;
         this.verified = verified;
@@ -196,5 +208,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 
 }

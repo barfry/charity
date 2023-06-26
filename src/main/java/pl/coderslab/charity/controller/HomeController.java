@@ -50,22 +50,17 @@ public class HomeController {
 
     @PostMapping("/register")
     public String registerNewUser(@Valid User user, BindingResult result, Model model){
-        try {
-            if (result.hasErrors() || !user.getPassword().equals(user.getConfirmPassword())) {
+            if (result.hasErrors() || !user.getPassword().equals(user.getConfirmPassword()) || userService.checkIfEmailExists(user)) {
                 if (!user.getPassword().equals(user.getConfirmPassword())) {
-                    result.rejectValue("confirmPassword", "error.confirmPassword", "Hasła");
+                    result.rejectValue("confirmPassword", "error.confirmPassword", "Hasła się różnią, proszę o poprawne powtórzenie hasła");
+                }
+                if(userService.checkIfEmailExists(user)){
+                    result.rejectValue("email", "error.email", "Podany e-mail jest już zarejestrowany");
                 }
                 model.addAttribute("user", user);
                 return "register";
             }
-            userService.registerUser(user);
-        } catch (DataIntegrityViolationException e){
-            String errorMessage = "E-mail został już zarejestrowany";
-            model.addAttribute("user", user);
-            model.addAttribute("errorMessage", errorMessage);
-            return "register";
-        }
-
+        userService.registerUser(user);
         return "redirect:/login";
     }
 

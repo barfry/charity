@@ -10,12 +10,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>Register form</title>
     <link rel="stylesheet" href="<c:url value="resources/css/style.css"/>"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-            crossorigin="anonymous"></script>
 </head>
 <body>
 <header>
@@ -26,26 +20,26 @@
     <form:form action="/register" method="post" modelAttribute="user">
         <div class="form-group">
             <form:input path="email" type="email" name="email" placeholder="E-mail"/>
-            <div class="text-danger">
-                <form:errors path="email"/>
-                <c:if test="${errorMessage != null}"><span>${errorMessage}</span></c:if>
+            <div>
+                <form:errors path="email" cssStyle="color: red"/>
+                <c:if test="${errorMessage != null}"><span style="color: red">${errorMessage}</span></c:if>
             </div>
         </div>
         <div class="form-group">
             <form:input path="firstName" type="firstName" name="firstName" placeholder="Imię"/>
-            <div class="text-danger"><form:errors path="firstName"/></div>
+            <div><form:errors path="firstName" cssStyle="color: red"/></div>
         </div>
         <div class="form-group">
             <form:input path="lastName" type="lastName" name="lastName" placeholder="Nazwisko"/>
-            <div class="text-danger"><form:errors path="lastName"/></div>
+            <div><form:errors path="lastName" cssStyle="color: red"/></div>
         </div>
         <div class="form-group">
             <form:input path="password" type="password" name="password" placeholder="Hasło"/>
-            <div class="text-danger"><form:errors path="password"/></div>
+            <div><form:errors path="password" cssStyle="color: red"/></div>
         </div>
         <div class="form-group">
             <form:input path="confirmPassword" type="password" name="confirmPassword" placeholder="Powtórz hasło"/>
-            <div class="text-danger"><form:errors path="confirmPassword"/></div>
+            <div><form:errors path="confirmPassword" cssStyle="color: red"/></div>
         </div>
 
         <div class="form-group form-group--buttons">

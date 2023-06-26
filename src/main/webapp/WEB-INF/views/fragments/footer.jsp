@@ -1,7 +1,7 @@
 <html>
 <head></head>
 <body>
-<div class="contact">
+<section id="contact" class="contact">
     <h2>Skontaktuj się z nami</h2>
     <h3>Formularz kontaktowy</h3>
     <form class="form--contact">
@@ -12,7 +12,7 @@
 
         <button class="btn" type="submit">Wyślij</button>
     </form>
-</div>
+</section>
 <div class="bottom-line">
     <span class="bottom-line--copy">Copyright &copy; 2018</span>
     <div class="bottom-line--icons">

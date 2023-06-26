@@ -33,7 +33,7 @@ public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new UserService();
+        return userService;
     }
 
     @Bean
@@ -55,7 +55,7 @@ public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/", "/login", "/register", "/verify", "/login-error", "/user-not-verified").permitAll()
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
