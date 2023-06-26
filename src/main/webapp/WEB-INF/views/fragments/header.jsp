@@ -19,11 +19,12 @@
         </ul>
 
         <ul>
-            <li><a href="#" class="btn btn--without-border active">Start</a></li>
-            <li><a href="index.html#steps" class="btn btn--without-border">O co chodzi?</a></li>
-            <li><a href="#" class="btn btn--without-border">O nas</a></li>
-            <li><a href="#" class="btn btn--without-border">Fundacje i organizacje</a></li>
-            <li><a href="#" class="btn btn--without-border">Kontakt</a></li>
+            <li><a href="/" class="btn btn--without-border active">Start</a></li>
+            <li><a href="/donate" class="btn btn--without-border">Podaruj</a></li>
+            <li><a href="/#steps" class="btn btn--without-border">O co chodzi?</a></li>
+            <li><a href="/#about-us" class="btn btn--without-border">O nas</a></li>
+            <li><a href="/#help" class="btn btn--without-border">Fundacje i organizacje</a></li>
+            <li><a href="/#contact" class="btn btn--without-border">Kontakt</a></li>
         </ul>
     </nav>
 </sec:authorize>
@@ -31,24 +32,26 @@
     <nav class="container container--70">
         <ul class="nav--actions">
             <li class="logged-user">
-                Witaj Agata
+                Witaj <sec:authentication property="principal.firstName" />
                 <ul class="dropdown">
                     <li><a href="#">Profil</a></li>
+                    <li><a href="/donate">Podaruj</a></li>
                     <li><a href="#">Moje zbiórki</a></li>
                     <sec:authorize access="hasRole('ROLE_ADMIN')">
                         <li><a href="#">Panel admina</a></li>
                     </sec:authorize>
-                    <li><a href="#">Wyloguj</a></li>
+                    <li><a href="/logout">Wyloguj</a></li>
                 </ul>
             </li>
         </ul>
 
         <ul>
-            <li><a href="index.html" class="btn btn--without-border active">Start</a></li>
-            <li><a href="index.html#steps" class="btn btn--without-border">O co chodzi?</a></li>
-            <li><a href="index.html#about-us" class="btn btn--without-border">O nas</a></li>
-            <li><a href="index.html#help" class="btn btn--without-border">Fundacje i organizacje</a></li>
-            <li><a href="index.html#contact" class="btn btn--without-border">Kontakt</a></li>
+            <li><a href="/" class="btn btn--without-border active">Start</a></li>
+            <li><a href="/donate" class="btn btn--without-border">Podaruj</a></li>
+            <li><a href="/#steps" class="btn btn--without-border">O co chodzi?</a></li>
+            <li><a href="/#about-us" class="btn btn--without-border">O nas</a></li>
+            <li><a href="/#help" class="btn btn--without-border">Fundacje i organizacje</a></li>
+            <li><a href="/#contact" class="btn btn--without-border">Kontakt</a></li>
         </ul>
     </nav>
 </sec:authorize>

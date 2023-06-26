@@ -13,13 +13,13 @@ import javax.validation.constraints.NotNull;
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     @NotBlank(message = "To pole nie może być puste")
     @Length(min = 2, max = 30, message = "Nazwa kategorii musi zawierać się między 2 a 30 znakami")
-    String name;
+    private String name;
 
     public Long getId() {
         return id;

@@ -2,14 +2,17 @@ package pl.coderslab.charity.service;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.coderslab.charity.exception.UserNotVerifiedException;
+import pl.coderslab.charity.model.Donation;
+import pl.coderslab.charity.model.User;
 import pl.coderslab.charity.model.VerificationToken;
 import pl.coderslab.charity.repository.UserRepository;
 import pl.coderslab.charity.repository.VerificationTokenRepository;
@@ -66,6 +69,10 @@ public class UserService implements UserDetailsService {
 
         roleService.assignUserRole(user);
         return userRepository.save(user);
+    }
+
+    public Boolean checkIfEmailExists(pl.coderslab.charity.model.User user){
+        return userRepository.existsByEmail(user.getEmail());
     }
 
     public void registerUser(pl.coderslab.charity.model.User user) {
@@ -144,5 +151,16 @@ public class UserService implements UserDetailsService {
         }
 
         return null; // Invalid token
+    }
+
+    public boolean isLoggedIn() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
+    }
+
+    public void addNewDonationToUser(Donation donation){
+        User user = getCurrentUser();
+        user.getDonations().add(donation);
+        userRepository.save(user);
     }
 }
