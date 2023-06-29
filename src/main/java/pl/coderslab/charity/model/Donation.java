@@ -19,7 +19,7 @@ public class Donation {
 
     @Positive(message = "Ilość nie może być równa lub mniejsza niż 0")
     @Digits(integer = 2, fraction = 0, message = "Ilość powinna wynosić pomiędzy 1 a 99")
-    @NotNull
+    @NotNull(message = "To pole nie może być puste")
     private Integer quantity;
 
     @ManyToMany
