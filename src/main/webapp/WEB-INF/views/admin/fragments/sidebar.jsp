@@ -17,7 +17,7 @@
             </a>
         </li>
         <li>
-            <a href="#" class="nav-link text-white h4">
+            <a href="/admin/donations" class="nav-link text-white h4">
                 Podarunki
             </a>
         </li>

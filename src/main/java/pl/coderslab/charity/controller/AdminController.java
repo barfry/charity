@@ -90,4 +90,22 @@ public class AdminController {
 
         return "redirect:/admin/institutions";
     }
+
+    @GetMapping("/donations")
+    public String showDonationsPage(Model model){
+        model.addAttribute("donations", donationService.getAllDonations());
+        return "admin/all-donations";
+    }
+
+    @PostMapping("/donations/remove-donation")
+    public String removeDonation(@RequestParam(name = "id") Long id){
+        donationService.removeDonationById(id);
+        return "redirect:/admin/donations";
+    }
+
+    @PostMapping("/donations/collect-donation")
+    public String collectDonation(@RequestParam(name = "id") Long id){
+        donationService.collectDonationById(id);
+        return "redirect:/admin/donations";
+    }
 }
