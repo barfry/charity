@@ -39,4 +39,16 @@ public class DonationService {
             userService.addNewDonationToUser(donation);
         }
     }
+
+    public List<Donation> getAllDonations(){
+        return donationRepository.findAll();
+    }
+
+    public void removeDonationById(Long id){
+        donationRepository.deleteById(id);
+    }
+
+    public void collectDonationById(Long id){
+        donationRepository.markDonationAsCollected(id);
+    }
 }

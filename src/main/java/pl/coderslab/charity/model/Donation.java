@@ -67,6 +67,7 @@ public class Donation {
     @Length(min = 3, max = 50, message = "Komentarz musi zawierać się między 2 a 50 znakami")
     private String pickUpComment;
 
+    private Boolean collected = false;
     public Long getId() {
         return id;
     }
@@ -155,7 +156,15 @@ public class Donation {
         this.pickUpComment = pickUpComment;
     }
 
-    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment) {
+    public Boolean getCollected() {
+        return collected;
+    }
+
+    public void setCollected(Boolean collected) {
+        this.collected = collected;
+    }
+
+    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment, Boolean collected) {
         this.id = id;
         this.quantity = quantity;
         this.categoryList = categoryList;
@@ -167,6 +176,7 @@ public class Donation {
         this.pickUpTime = pickUpTime;
         this.phoneNumber = phoneNumber;
         this.pickUpComment = pickUpComment;
+        this.collected = collected;
     }
 
     public Donation() {
