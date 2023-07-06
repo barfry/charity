@@ -67,7 +67,7 @@ public class Donation {
     @Length(min = 3, max = 50, message = "Komentarz musi zawierać się między 2 a 50 znakami")
     private String pickUpComment;
 
-    private Boolean collected = false;
+    private Boolean collected;
     public Long getId() {
         return id;
     }

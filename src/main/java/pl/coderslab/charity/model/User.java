@@ -36,7 +36,7 @@ public class User implements UserDetails {
     @NotNull
     @NotBlank(message = "To pole nie może być puste")
     @Email(message = "To pole musi być w formacie e-mail np.: adres@domena.pl")
-    @Length(min = 5, max = 50, message = "E-mail musi zawierać się między 2 a 50 znakami")
+    @Length(min = 5, max = 50, message = "E-mail musi zawierać się między 5 a 50 znakami")
     @Column(name="email", unique = true)
     private String email;
 
@@ -54,10 +54,10 @@ public class User implements UserDetails {
             @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Donation> donations;
 
-    private Boolean enabled = true;
+    private Boolean enabled;
 
     private String verificationToken;
 
@@ -206,7 +206,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 
 
