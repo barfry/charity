@@ -32,7 +32,7 @@ public class DonationService {
     }
 
     public void saveNewDonation(Donation donation){
-
+        donation.setCollected(false);
         donationRepository.save(donation);
 
         if(userService.isLoggedIn()) {

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import pl.coderslab.charity.dto.UserDTO;
 import pl.coderslab.charity.model.Institution;
 import pl.coderslab.charity.service.CategoryService;
 import pl.coderslab.charity.service.DonationService;
@@ -108,4 +109,48 @@ public class AdminController {
         donationService.collectDonationById(id);
         return "redirect:/admin/donations";
     }
+
+    @GetMapping("/users")
+    public String showUsersPage(Model model){
+        model.addAttribute("users", userService.getAllUserByRole("ROLE_USER"));
+        return "admin/all-users";
+    }
+
+    @GetMapping("/users/edit-user")
+    public String initEditUserPage(@RequestParam(name = "id") Long id, Model model){
+        model.addAttribute("userDto", userService.getUserDtoByUserId(id));
+        return "admin/edit-user";
+    }
+
+    @PostMapping("/users/edit-user")
+    public String editUser(@Valid UserDTO userDTO, BindingResult result, Model model){
+        if(result.hasErrors()){
+            model.addAttribute("userDto", userDTO);
+            return "admin/edit-user";
+        }
+
+        userService.editUser(userDTO);
+
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/block-user")
+    public String blockUser(@RequestParam(name = "id") Long id){
+        userService.blockUserById(id);
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/unblock-user")
+    public String unblockUser(@RequestParam(name = "id") Long id){
+        userService.unblockUserById(id);
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/users/remove-user")
+    public String removeUser(@RequestParam(name = "id") Long id){
+        userService.removeUserById(id);
+        return "redirect:/admin/users";
+    }
+
+
 }
