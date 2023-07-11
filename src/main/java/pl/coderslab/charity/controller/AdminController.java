@@ -4,12 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charity.dto.UserDTO;
 import pl.coderslab.charity.model.Institution;
+import pl.coderslab.charity.model.User;
 import pl.coderslab.charity.service.CategoryService;
 import pl.coderslab.charity.service.DonationService;
 import pl.coderslab.charity.service.InstitutionService;
@@ -17,6 +15,7 @@ import pl.coderslab.charity.service.UserService;
 
 import javax.naming.Binding;
 import javax.validation.Valid;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/admin")
@@ -152,5 +151,67 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
+    @GetMapping("/admins")
+    public String showAdminsPage(Model model){
+        model.addAttribute("admins", userService.getAllUserByRole("ROLE_ADMIN"));
+        return "admin/all-admins";
+    }
 
+    @GetMapping("/admins/edit-admin")
+    public String initEditAdminPage(@RequestParam(name = "id") Long id, Model model){
+        model.addAttribute("userDto", userService.getUserDtoByUserId(id));
+        return "admin/edit-user";
+    }
+
+    @PostMapping("/admins/edit-admin")
+    public String editAdmin(@Valid @ModelAttribute(name = "userDto") UserDTO userDTO, BindingResult result, Model model){
+        if(result.hasErrors()){
+            model.addAttribute("userDto", userDTO);
+            return "admin/edit-user";
+        }
+
+        userService.editUser(userDTO);
+
+        return "redirect:/admin/admins";
+    }
+
+    @PostMapping("/admins/remove-admin")
+    public String removeAdmin(@RequestParam(name = "id") Long id, @RequestParam(name = "adminsCount") Integer adminsCount, Model model){
+        if(adminsCount == 1 || Objects.equals(userService.getCurrentUser().getId(), id)){
+            if(adminsCount == 1){
+                model.addAttribute("errorCount", true);
+            }
+            if(Objects.equals(userService.getCurrentUser().getId(), id)){
+                model.addAttribute("errorSelf", true);
+            }
+            model.addAttribute("admins", userService.getAllUserByRole("ROLE_ADMIN"));
+            return "admin/all-admins";
+        }
+
+        userService.removeUserById(id);
+
+        return "redirect:/admin/admins";
+    }
+
+    @GetMapping("/admins/add-new-admin")
+    public String initAddNewAdminForm(Model model){
+        model.addAttribute("admin", new User());
+        return "admin/add-new-admin";
+    }
+
+    @PostMapping("/admins/add-new-admin")
+    public String addNewAdmin(@Valid @ModelAttribute("admin") User admin, BindingResult result, Model model){
+        if (result.hasErrors() || !admin.getPassword().equals(admin.getConfirmPassword()) || userService.checkIfEmailExists(admin)) {
+            if (!admin.getPassword().equals(admin.getConfirmPassword())) {
+                result.rejectValue("confirmPassword", "error.confirmPassword", "Hasła się różnią, proszę o poprawne powtórzenie hasła");
+            }
+            if(userService.checkIfEmailExists(admin)){
+                result.rejectValue("email", "error.email", "Podany e-mail jest już zarejestrowany");
+            }
+            model.addAttribute("admin", admin);
+            return "admin/add-new-admin";
+        }
+        userService.addNewAdmin(admin);
+        return "redirect:/admin/admins";
+    }
 }

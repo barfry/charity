@@ -22,17 +22,12 @@
             </a>
         </li>
         <li>
-            <a href="#" class="nav-link text-white h4">
-                Kategorie
-            </a>
-        </li>
-        <li>
             <a href="/admin/users" class="nav-link text-white h4">
                 Użytkownicy
             </a>
         </li>
         <li>
-            <a href="#" class="nav-link text-white h4">
+            <a href="/admin/admins" class="nav-link text-white h4">
                 Admini
             </a>
         </li>

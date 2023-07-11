@@ -135,7 +135,7 @@ public class UserService implements UserDetailsService {
             String verificationLink = "http://localhost:8080/verify?token=" + verificationToken;
             String messageContent = "Kliknij w link aby zweryfikować swój adres e-mail: <a href='" + verificationLink + "'>" + verificationLink + "</a>";
             message.setContent(messageContent, "text/html");
-            message.setHeader("Content-Type", "text/html; charset=UTF-8");
+            message.setHeader("Content-Type", "text/html; charset=ISO-8859-2");
 
             Transport.send(message);
         } catch (MessagingException e) {
@@ -215,5 +215,30 @@ public class UserService implements UserDetailsService {
 
     public List<User> getAllUserByRole(String roleName){
         return userRepository.findByRoles_Name(roleName);
+    }
+
+    public void addNewAdmin(pl.coderslab.charity.model.User user) {
+
+        String verificationToken = generateVerificationToken();
+
+        user.setVerificationToken(verificationToken);
+        user.setVerified(false);
+        user.setEnabled(true);
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        roleService.assignAdminRole(user);
+        userRepository.save(user);
+
+        // Create a verification token entity and associate it with the user
+        VerificationToken tokenEntity = new VerificationToken();
+        tokenEntity.setToken(verificationToken);
+        tokenEntity.setUser(user);
+        verificationTokenRepository.save(tokenEntity);
+
+        // Send verification email to the user
+        sendVerificationEmail(user.getEmail(), verificationToken);
     }
 }

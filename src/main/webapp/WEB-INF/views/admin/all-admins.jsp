@@ -5,7 +5,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Użytkownicy</title>
+    <title>Admini</title>
     <link rel="stylesheet" href="<c:url value="${pageContext.request.contextPath}/resources/css/style.css"/>"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -18,7 +18,14 @@
                 <c:import url="fragments/sidebar.jsp"/>
             </div>
             <div class="col-10">
-                <h1>Użytkownicy</h1>
+                <h1>Admini</h1>
+                <a class="btn btn-primary my-4" href="/admin/admins/add-new-admin">Dodaj nowego admina</a>
+                <c:if test="${errorCount}">
+                    <p style="color: red">Nie można usunąć admina, liczba adminów nie może być mniejsza niż 1</p>
+                </c:if>
+                <c:if test="${errorSelf}">
+                    <p style="color: red">Admin nie może usunąć samego siebie</p>
+                </c:if>
                 <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
                     <thead>
                     <tr>
@@ -33,15 +40,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${users}" var="user">
+                    <c:forEach items="${admins}" var="admin">
                         <tr>
-                            <td>${user.id}</td>
-                            <td>${user.firstName}</td>
-                            <td>${user.lastName}</td>
-                            <td>${user.email}</td>
-                            <td>${user.donations.size()}</td>
+                            <td>${admin.id}</td>
+                            <td>${admin.firstName}</td>
+                            <td>${admin.lastName}</td>
+                            <td>${admin.email}</td>
+                            <td>${admin.donations.size()}</td>
                             <td><c:choose>
-                                <c:when test="${user.enabled == true}">
+                                <c:when test="${admin.enabled == true}">
                                     Tak
                                 </c:when>
                                 <c:otherwise>
@@ -49,7 +56,7 @@
                                 </c:otherwise>
                             </c:choose></td>
                             <td><c:choose>
-                                <c:when test="${user.verified == true}">
+                                <c:when test="${admin.verified == true}">
                                     Tak
                                 </c:when>
                                 <c:otherwise>
@@ -57,34 +64,15 @@
                                 </c:otherwise>
                             </c:choose></td>
                             <td>
-                                <a class="btn btn-primary" href="/admin/users/edit-user?id=${user.id}">Edytuj</a>
-                                <form:form action="/admin/users/remove-user" method="post"
+                                <a class="btn btn-primary" href="/admin/admins/edit-admin?id=${admin.id}">Edytuj</a>
+                                <form:form action="/admin/admins/remove-admin" method="post"
                                            cssClass="d-flex justify-content-center m-2">
-                                    <input type="hidden" name="id" value="${user.id}"/>
+                                    <input type="hidden" name="id" value="${admin.id}"/>
+                                    <input type="hidden" name="adminsCount" value="${admins.size()}">
                                     <input type="submit" value="Usuń" class="btn btn-primary"
-                                           data-confirm-delete="Proszę potwierdzić usunięcie użytkownika ${user.firstName} ${user.lastName} ${user.email}"
+                                           data-confirm-delete="Proszę potwierdzić usunięcie użytkownika ${admin.firstName} ${admin.lastName} ${admin.email}"
                                            onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"/>
                                 </form:form>
-                                <c:choose>
-                                    <c:when test="${user.enabled == true}">
-                                        <form:form action="/admin/users/block-user" method="post"
-                                                   cssClass="d-flex justify-content-center m-2">
-                                            <input type="hidden" name="id" value="${user.id}"/>
-                                            <input type="submit" value="Zablokuj" class="btn btn-primary"
-                                                   data-confirm-block="Proszę potwierdzić zablokowanie użytkownika ${user.firstName} ${user.lastName} ${user.email}"
-                                                   onclick="if (!confirm(this.getAttribute('data-confirm-block'))) return false"/>
-                                        </form:form>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <form:form action="/admin/users/unblock-user" method="post"
-                                                   cssClass="d-flex justify-content-center m-2">
-                                            <input type="hidden" name="id" value="${user.id}"/>
-                                            <input type="submit" value="Odblokuj" class="btn btn-primary"
-                                                   data-confirm-unblock="Proszę potwierdzić odblokowanie użytkownika ${user.firstName} ${user.lastName} ${user.email}"
-                                                   onclick="if (!confirm(this.getAttribute('data-confirm-unblock'))) return false"/>
-                                        </form:form>
-                                    </c:otherwise>
-                                </c:choose>
                             </td>
                         </tr>
                     </c:forEach>
