@@ -1,6 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -59,26 +61,29 @@
                             <td>${donation.pickUpComment}</td>
                             <td><c:choose>
                                 <c:when test="${donation.collected == true}">
-                                    Tak
+                                    <fmt:parseDate value="${ donation.collectionDateTime}" pattern="y-M-dd'T'H:m" var="myParseDate"></fmt:parseDate>
+                                    <fmt:formatDate value="${myParseDate}"  pattern="dd.MM.yyyy HH:mm"></fmt:formatDate >
                                 </c:when>
                                 <c:otherwise>
                                     Nie
                                 </c:otherwise>
                             </c:choose></td>
                             <td>
-                                <form:form action="/admin/donations/collect-donation" method="post"
-                                           cssClass="d-flex justify-content-center">
-                                    <input type="hidden" name="id" value="${donation.id}" />
-                                    <input type="submit" value="Oznacz jako odebrane" class="btn btn-primary"
-                                           data-confirm-collect="Proszę potwierdzić odebranie podarunku id: ${donation.id}"
-                                           onclick="if (!confirm(this.getAttribute('data-confirm-collect'))) return false" />
-                                </form:form>
+                                <c:if test="${donation.collected == false}">
+                                    <form:form action="/admin/donations/collect-donation" method="post"
+                                               cssClass="d-flex justify-content-center">
+                                        <input type="hidden" name="id" value="${donation.id}"/>
+                                        <input type="submit" value="Oznacz jako odebrane" class="btn btn-primary"
+                                               data-confirm-collect="Proszę potwierdzić odebranie podarunku id: ${donation.id}"
+                                               onclick="if (!confirm(this.getAttribute('data-confirm-collect'))) return false"/>
+                                    </form:form>
+                                </c:if>
                                 <form:form action="/admin/donations/remove-donation" method="post"
                                            cssClass="d-flex justify-content-center">
-                                    <input type="hidden" name="id" value="${donation.id}" />
+                                    <input type="hidden" name="id" value="${donation.id}"/>
                                     <input type="submit" value="Usuń" class="btn btn-primary"
                                            data-confirm-delete="Proszę potwierdzić usunięcie podarunku id: ${donation.id}"
-                                           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false" />
+                                           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"/>
                                 </form:form>
                             </td>
                         </tr>

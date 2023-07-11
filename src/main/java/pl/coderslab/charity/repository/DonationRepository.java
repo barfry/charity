@@ -14,6 +14,6 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
 
     @Transactional
     @Modifying
-    @Query("UPDATE Donation d SET d.collected = true, d.collectionDate = CURRENT_TIMESTAMP WHERE d.id = :id")
+    @Query("UPDATE Donation d SET d.collected = true, d.collectionDateTime = CURRENT_TIMESTAMP WHERE d.id = :id")
     void markDonationAsCollected(@Param("id") Long id);
 }

@@ -70,7 +70,7 @@ public class Donation {
 
     private Boolean collected;
 
-    private LocalDateTime collectionDate;
+    private LocalDateTime collectionDateTime;
 
     public Long getId() {
         return id;
@@ -168,9 +168,15 @@ public class Donation {
         this.collected = collected;
     }
 
+    public LocalDateTime getCollectionDateTime() {
+        return collectionDateTime;
+    }
 
+    public void setCollectionDateTime(LocalDateTime collectionDateTime) {
+        this.collectionDateTime = collectionDateTime;
+    }
 
-    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment, Boolean collected, LocalDateTime collectionDate) {
+    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment, Boolean collected, LocalDateTime collectionDateTime) {
         this.id = id;
         this.quantity = quantity;
         this.categoryList = categoryList;
@@ -183,7 +189,7 @@ public class Donation {
         this.phoneNumber = phoneNumber;
         this.pickUpComment = pickUpComment;
         this.collected = collected;
-        this.collectionDate = collectionDate;
+        this.collectionDateTime = collectionDateTime;
     }
 
     public Donation() {
