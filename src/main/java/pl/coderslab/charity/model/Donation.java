@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class Donation {
 
     @Positive(message = "Ilość nie może być równa lub mniejsza niż 0")
     @Digits(integer = 2, fraction = 0, message = "Ilość powinna wynosić pomiędzy 1 a 99")
-    @NotNull
+    @NotNull(message = "To pole nie może być puste")
     private Integer quantity;
 
     @ManyToMany
@@ -66,6 +67,10 @@ public class Donation {
     @NotBlank(message = "To pole nie może być puste")
     @Length(min = 3, max = 50, message = "Komentarz musi zawierać się między 2 a 50 znakami")
     private String pickUpComment;
+
+    private Boolean collected;
+
+    private LocalDateTime collectionDateTime;
 
     public Long getId() {
         return id;
@@ -155,7 +160,23 @@ public class Donation {
         this.pickUpComment = pickUpComment;
     }
 
-    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment) {
+    public Boolean getCollected() {
+        return collected;
+    }
+
+    public void setCollected(Boolean collected) {
+        this.collected = collected;
+    }
+
+    public LocalDateTime getCollectionDateTime() {
+        return collectionDateTime;
+    }
+
+    public void setCollectionDateTime(LocalDateTime collectionDateTime) {
+        this.collectionDateTime = collectionDateTime;
+    }
+
+    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment, Boolean collected, LocalDateTime collectionDateTime) {
         this.id = id;
         this.quantity = quantity;
         this.categoryList = categoryList;
@@ -167,6 +188,8 @@ public class Donation {
         this.pickUpTime = pickUpTime;
         this.phoneNumber = phoneNumber;
         this.pickUpComment = pickUpComment;
+        this.collected = collected;
+        this.collectionDateTime = collectionDateTime;
     }
 
     public Donation() {

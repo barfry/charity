@@ -38,7 +38,8 @@
             <div><form:errors path="password" cssStyle="color: red"/></div>
         </div>
         <div class="form-group">
-            <form:input path="confirmPassword" type="password" name="confirmPassword" placeholder="Powtórz hasło"/>
+            <form:input path="confirmPassword" type="password" name="confirmPassword"
+                        placeholder="Powtórz hasło"/>
             <div><form:errors path="confirmPassword" cssStyle="color: red"/></div>
         </div>
 

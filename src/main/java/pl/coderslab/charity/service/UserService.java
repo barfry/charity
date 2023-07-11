@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.coderslab.charity.dto.UserDTO;
 import pl.coderslab.charity.exception.UserNotVerifiedException;
 import pl.coderslab.charity.model.Donation;
 import pl.coderslab.charity.model.User;
@@ -21,6 +22,7 @@ import javax.annotation.Resource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.List;
 import java.util.Properties;
 
 @Service
@@ -55,14 +57,14 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     public UserService() {
     }
 
-    public pl.coderslab.charity.model.User saveNewUser(pl.coderslab.charity.model.User user){
+    public pl.coderslab.charity.model.User saveNewUser(pl.coderslab.charity.model.User user) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
@@ -71,7 +73,7 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public Boolean checkIfEmailExists(pl.coderslab.charity.model.User user){
+    public Boolean checkIfEmailExists(pl.coderslab.charity.model.User user) {
         return userRepository.existsByEmail(user.getEmail());
     }
 
@@ -81,6 +83,7 @@ public class UserService implements UserDetailsService {
 
         user.setVerificationToken(verificationToken);
         user.setVerified(false);
+        user.setEnabled(true);
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
@@ -132,7 +135,7 @@ public class UserService implements UserDetailsService {
             String verificationLink = "http://localhost:8080/verify?token=" + verificationToken;
             String messageContent = "Kliknij w link aby zweryfikować swój adres e-mail: <a href='" + verificationLink + "'>" + verificationLink + "</a>";
             message.setContent(messageContent, "text/html");
-            message.setHeader("Content-Type", "text/html; charset=UTF-8");
+            message.setHeader("Content-Type", "text/html; charset=ISO-8859-2");
 
             Transport.send(message);
         } catch (MessagingException e) {
@@ -158,9 +161,84 @@ public class UserService implements UserDetailsService {
         return authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken);
     }
 
-    public void addNewDonationToUser(Donation donation){
+    public void addNewDonationToUser(Donation donation) {
         User user = getCurrentUser();
         user.getDonations().add(donation);
         userRepository.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findUserById(id);
+    }
+
+    public UserDTO getUserDtoByUserId(Long id){
+        User user = getUserById(id);
+        UserDTO userDto = new UserDTO();
+
+        userDto.setId(id);
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+
+        return userDto;
+    }
+
+    public User editUser(UserDTO userDTO) {
+        User user = getUserById(userDTO.getId());
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+
+        return userRepository.save(user);
+    }
+
+    public void blockUserById(Long id){
+        User user = getUserById(id);
+        user.setEnabled(false);
+        userRepository.save(user);
+    }
+
+    public void unblockUserById(Long id){
+        User user = getUserById(id);
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    public void removeUserById(Long id){
+        userRepository.deleteById(id);
+    }
+
+    public List<User> getAllUserByRole(String roleName){
+        return userRepository.findByRoles_Name(roleName);
+    }
+
+    public void addNewAdmin(pl.coderslab.charity.model.User user) {
+
+        String verificationToken = generateVerificationToken();
+
+        user.setVerificationToken(verificationToken);
+        user.setVerified(false);
+        user.setEnabled(true);
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+
+        roleService.assignAdminRole(user);
+        userRepository.save(user);
+
+        // Create a verification token entity and associate it with the user
+        VerificationToken tokenEntity = new VerificationToken();
+        tokenEntity.setToken(verificationToken);
+        tokenEntity.setUser(user);
+        verificationTokenRepository.save(tokenEntity);
+
+        // Send verification email to the user
+        sendVerificationEmail(user.getEmail(), verificationToken);
     }
 }

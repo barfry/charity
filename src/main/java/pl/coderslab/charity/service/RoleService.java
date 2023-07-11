@@ -24,5 +24,7 @@ public class RoleService {
         user.setRoles(new HashSet<Role>(Arrays.asList(roleRepository.findById(1L).get())));
     }
 
-
+    public void assignAdminRole(User user){
+        user.setRoles(new HashSet<Role>(Arrays.asList(roleRepository.findById(2L).get())));
+    }
 }
