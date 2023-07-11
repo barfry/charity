@@ -10,7 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import pl.coderslab.charity.handler.CustomAuthenticationSuccessHandler;
 import pl.coderslab.charity.handler.UserNotVerifiedAuthenticationFailureHandler;
 import pl.coderslab.charity.service.UserService;
 
@@ -45,6 +47,11 @@ public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
         return authProvider;
     }
 
+    @Bean
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new CustomAuthenticationSuccessHandler();
+    }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService);
@@ -62,7 +69,7 @@ public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(authenticationFailureHandler)
                 .loginPage("/login")
                 .usernameParameter("email")
-                .defaultSuccessUrl("/", true)
+                .successHandler(authenticationSuccessHandler())
                 .and()
                 .logout()
                 .logoutSuccessUrl("/")

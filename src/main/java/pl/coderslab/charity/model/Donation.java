@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -68,6 +69,9 @@ public class Donation {
     private String pickUpComment;
 
     private Boolean collected;
+
+    private LocalDateTime collectionDate;
+
     public Long getId() {
         return id;
     }
@@ -164,7 +168,9 @@ public class Donation {
         this.collected = collected;
     }
 
-    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment, Boolean collected) {
+
+
+    public Donation(Long id, Integer quantity, List<Category> categoryList, Institution institution, String street, String city, String zipCode, LocalDate pickUpDate, LocalTime pickUpTime, String phoneNumber, String pickUpComment, Boolean collected, LocalDateTime collectionDate) {
         this.id = id;
         this.quantity = quantity;
         this.categoryList = categoryList;
@@ -177,6 +183,7 @@ public class Donation {
         this.phoneNumber = phoneNumber;
         this.pickUpComment = pickUpComment;
         this.collected = collected;
+        this.collectionDate = collectionDate;
     }
 
     public Donation() {
