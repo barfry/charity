@@ -8,47 +8,30 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Formularz rejestracji</title>
+    <title>Profil użytkownika</title>
     <link rel="stylesheet" href="<c:url value="resources/css/style.css"/>"/>
 </head>
 <body>
-<header>
+<header class="header--form-page">
     <c:import url="fragments/header.jsp"/>
-</header>
-<section class="login-page">
-    <h2>Załóż konto</h2>
-    <form:form action="/register" method="post" modelAttribute="user">
-        <div class="form-group">
-            <form:input path="email" type="email" name="email" placeholder="E-mail"/>
-            <div>
-                <form:errors path="email" cssStyle="color: red"/>
-                <c:if test="${errorMessage != null}"><span style="color: red">${errorMessage}</span></c:if>
+
+    <div class="slogan container container--90">
+        <div class="slogan--item">
+            <h1>
+                Dane użytkownika
+            </h1>
+
+            <div class="slogan--steps">
+                <div class="slogan--steps-title">Imię: ${userDto.firstName}</div>
+                <div class="slogan--steps-title">Nazwisko: ${userDto.lastName}</div>
+                <div class="slogan--steps-title">E-mail: ${userDto.email}</div>
+                <div class="slogan--steps-title">
+                    <a href="/user/edit-profile" class="btn btn-close-white" style="margin-right: 50px">Edytuj dane</a><a href="/user/change-password" class="btn btn-close-white">Zmień hasło</a>
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <form:input path="firstName" type="firstName" name="firstName" placeholder="Imię"/>
-            <div><form:errors path="firstName" cssStyle="color: red"/></div>
-        </div>
-        <div class="form-group">
-            <form:input path="lastName" type="lastName" name="lastName" placeholder="Nazwisko"/>
-            <div><form:errors path="lastName" cssStyle="color: red"/></div>
-        </div>
-        <div class="form-group">
-            <form:input path="password" type="password" name="password" placeholder="Hasło"/>
-            <div><form:errors path="password" cssStyle="color: red"/></div>
-        </div>
-        <div class="form-group">
-            <form:input path="confirmPassword" type="password" name="confirmPassword"
-                        placeholder="Powtórz hasło"/>
-            <div><form:errors path="confirmPassword" cssStyle="color: red"/></div>
-        </div>
-
-        <div class="form-group form-group--buttons">
-            <a href="login.html" class="btn btn--without-border">Zaloguj się</a>
-            <button class="btn" type="submit">Załóż konto</button>
-        </div>
-    </form:form>
-</section>
+    </div>
+</header>
 <footer>
     <div class="contact">
         <h2>Skontaktuj się z nami</h2>
