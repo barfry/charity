@@ -3,6 +3,7 @@ package pl.coderslab.charity.service;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -75,6 +76,10 @@ public class UserService implements UserDetailsService {
 
     public Boolean checkIfEmailExists(pl.coderslab.charity.model.User user) {
         return userRepository.existsByEmail(user.getEmail());
+    }
+
+    public Boolean checkIfEmailExistsOnEditUser(UserDTO userDTO) {
+        return userRepository.existsByEmail(userDTO.getEmail());
     }
 
     public void registerUser(pl.coderslab.charity.model.User user) {
@@ -187,6 +192,18 @@ public class UserService implements UserDetailsService {
         return userDto;
     }
 
+    public UserDTO getCurrentUserDto(){
+        User user = getCurrentUser();
+        UserDTO userDto = new UserDTO();
+
+        userDto.setId(user.getId());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+
+        return userDto;
+    }
+
     public User editUser(UserDTO userDTO) {
         User user = getUserById(userDTO.getId());
 
@@ -195,6 +212,24 @@ public class UserService implements UserDetailsService {
         user.setEmail(userDTO.getEmail());
 
         return userRepository.save(user);
+    }
+
+    public void editCurrentUser(UserDTO userDTO) {
+        User user = getUserById(userDTO.getId());
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+
+        userRepository.save(user);
+
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserDetails updatedUserDetails = userRepository.findByEmail(currentUsername);
+
+        Authentication currentAuth = new UsernamePasswordAuthenticationToken(updatedUserDetails, updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(currentAuth);
+
     }
 
     public void blockUserById(Long id){
