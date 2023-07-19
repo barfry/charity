@@ -3,12 +3,14 @@ package pl.coderslab.charity.service;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import pl.coderslab.charity.dto.UserDTO;
 import pl.coderslab.charity.exception.UserNotVerifiedException;
@@ -40,6 +42,8 @@ public class UserService implements UserDetailsService {
         this.roleService = roleService;
         this.verificationTokenRepository = verificationTokenRepository;
     }
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -77,6 +81,10 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(user.getEmail());
     }
 
+    public Boolean checkIfEmailExistsOnEditUser(UserDTO userDTO) {
+        return userRepository.existsByEmail(userDTO.getEmail());
+    }
+
     public void registerUser(pl.coderslab.charity.model.User user) {
 
         String verificationToken = generateVerificationToken();
@@ -85,7 +93,6 @@ public class UserService implements UserDetailsService {
         user.setVerified(false);
         user.setEnabled(true);
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
@@ -187,6 +194,18 @@ public class UserService implements UserDetailsService {
         return userDto;
     }
 
+    public UserDTO getCurrentUserDto(){
+        User user = getCurrentUser();
+        UserDTO userDto = new UserDTO();
+
+        userDto.setId(user.getId());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
+        userDto.setEmail(user.getEmail());
+
+        return userDto;
+    }
+
     public User editUser(UserDTO userDTO) {
         User user = getUserById(userDTO.getId());
 
@@ -195,6 +214,24 @@ public class UserService implements UserDetailsService {
         user.setEmail(userDTO.getEmail());
 
         return userRepository.save(user);
+    }
+
+    public void editCurrentUser(UserDTO userDTO) {
+        User user = getUserById(userDTO.getId());
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+
+        userRepository.save(user);
+
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserDetails updatedUserDetails = userRepository.findByEmail(currentUsername);
+
+        Authentication currentAuth = new UsernamePasswordAuthenticationToken(updatedUserDetails, updatedUserDetails.getPassword(), updatedUserDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(currentAuth);
+
     }
 
     public void blockUserById(Long id){
@@ -240,5 +277,18 @@ public class UserService implements UserDetailsService {
 
         // Send verification email to the user
         sendVerificationEmail(user.getEmail(), verificationToken);
+    }
+
+    public Boolean verifyPassword(String oldPassword){
+        User user = getCurrentUser();
+        return passwordEncoder.matches(oldPassword, user.getPassword());
+    }
+
+    public void changePassword(String newPassword){
+        User user = getCurrentUser();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
     }
 }

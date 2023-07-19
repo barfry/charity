@@ -8,7 +8,8 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Formularz rejestracji</title>
+    <title>Edycja profilu</title>
+    <base href="/">
     <link rel="stylesheet" href="<c:url value="resources/css/style.css"/>"/>
 </head>
 <body>
@@ -16,8 +17,9 @@
     <c:import url="fragments/header.jsp"/>
 </header>
 <section class="login-page">
-    <h2>Załóż konto</h2>
-    <form:form action="/register" method="post" modelAttribute="user">
+    <h2>Edycja profilu</h2>
+    <form:form action="/user/edit-profile" method="post" modelAttribute="userDto">
+        <form:hidden path="id" name="id"/>
         <div class="form-group">
             <form:input path="email" type="email" name="email" placeholder="E-mail"/>
             <div>
@@ -30,22 +32,13 @@
             <div><form:errors path="firstName" cssStyle="color: red"/></div>
         </div>
         <div class="form-group">
-            <form:input path="lastName" type="lastName" name="lastName" placeholder="Nazwisko"/>
+            <form:input path="lastName" type="lastName" name="lastName" placeholder="Nazwisko" size="50"/>
             <div><form:errors path="lastName" cssStyle="color: red"/></div>
-        </div>
-        <div class="form-group">
-            <form:input path="password" type="password" name="password" placeholder="Hasło"/>
-            <div><form:errors path="password" cssStyle="color: red"/></div>
-        </div>
-        <div class="form-group">
-            <form:input path="confirmPassword" type="password" name="confirmPassword"
-                        placeholder="Powtórz hasło"/>
-            <div><form:errors path="confirmPassword" cssStyle="color: red"/></div>
         </div>
 
         <div class="form-group form-group--buttons">
-            <a href="login.html" class="btn btn--without-border">Zaloguj się</a>
-            <button class="btn" type="submit">Załóż konto</button>
+            <a href="/user" class="btn btn--without-border">Cofnij</a>
+            <button class="btn" type="submit">Zapisz</button>
         </div>
     </form:form>
 </section>

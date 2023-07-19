@@ -8,7 +8,8 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Formularz rejestracji</title>
+    <title>Zmiana hasła</title>
+    <base href="/">
     <link rel="stylesheet" href="<c:url value="resources/css/style.css"/>"/>
 </head>
 <body>
@@ -16,26 +17,17 @@
     <c:import url="fragments/header.jsp"/>
 </header>
 <section class="login-page">
-    <h2>Załóż konto</h2>
-    <form:form action="/register" method="post" modelAttribute="user">
+    <h2>Zmiana hasła</h2>
+    <form:form action="/user/change-password" method="post" modelAttribute="changePasswordDTO">
         <div class="form-group">
-            <form:input path="email" type="email" name="email" placeholder="E-mail"/>
+            <form:input path="oldPassword" type="password" name="oldPassword" placeholder="Stare hasło"/>
             <div>
-                <form:errors path="email" cssStyle="color: red"/>
-                <c:if test="${errorMessage != null}"><span style="color: red">${errorMessage}</span></c:if>
+                <form:errors path="oldPassword" cssStyle="color: red"/>
             </div>
         </div>
         <div class="form-group">
-            <form:input path="firstName" type="firstName" name="firstName" placeholder="Imię"/>
-            <div><form:errors path="firstName" cssStyle="color: red"/></div>
-        </div>
-        <div class="form-group">
-            <form:input path="lastName" type="lastName" name="lastName" placeholder="Nazwisko"/>
-            <div><form:errors path="lastName" cssStyle="color: red"/></div>
-        </div>
-        <div class="form-group">
-            <form:input path="password" type="password" name="password" placeholder="Hasło"/>
-            <div><form:errors path="password" cssStyle="color: red"/></div>
+            <form:input path="newPassword" type="password" name="newPassword" placeholder="Nowe hasło"/>
+            <div><form:errors path="newPassword" cssStyle="color: red"/></div>
         </div>
         <div class="form-group">
             <form:input path="confirmPassword" type="password" name="confirmPassword"
@@ -44,8 +36,8 @@
         </div>
 
         <div class="form-group form-group--buttons">
-            <a href="login.html" class="btn btn--without-border">Zaloguj się</a>
-            <button class="btn" type="submit">Załóż konto</button>
+            <a href="/user" class="btn btn--without-border">Cofnij</a>
+            <button class="btn" type="submit">Zapisz</button>
         </div>
     </form:form>
 </section>

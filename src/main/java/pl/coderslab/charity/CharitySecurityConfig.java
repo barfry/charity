@@ -62,6 +62,7 @@ public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/user/**").hasAuthority("ROLE_USER")
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
