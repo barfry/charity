@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import pl.coderslab.charity.dto.UserDTO;
 import pl.coderslab.charity.exception.UserNotVerifiedException;
@@ -41,6 +42,8 @@ public class UserService implements UserDetailsService {
         this.roleService = roleService;
         this.verificationTokenRepository = verificationTokenRepository;
     }
+
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -90,7 +93,6 @@ public class UserService implements UserDetailsService {
         user.setVerified(false);
         user.setEnabled(true);
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
@@ -275,5 +277,18 @@ public class UserService implements UserDetailsService {
 
         // Send verification email to the user
         sendVerificationEmail(user.getEmail(), verificationToken);
+    }
+
+    public Boolean verifyPassword(String oldPassword){
+        User user = getCurrentUser();
+        return passwordEncoder.matches(oldPassword, user.getPassword());
+    }
+
+    public void changePassword(String newPassword){
+        User user = getCurrentUser();
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
     }
 }

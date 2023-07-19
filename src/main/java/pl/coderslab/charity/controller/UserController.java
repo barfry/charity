@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import pl.coderslab.charity.dto.ChangePasswordDTO;
 import pl.coderslab.charity.dto.UserDTO;
 import pl.coderslab.charity.service.UserService;
 
@@ -45,6 +46,42 @@ public class UserController {
         }
 
         userService.editCurrentUser(userDTO);
+
+        return "redirect:/user";
+    }
+
+    @GetMapping("/change-password")
+    public String initChangePasswordFormPage(Model model) {
+        model.addAttribute("changePasswordDTO", new ChangePasswordDTO());
+        return "change-password";
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(@Valid ChangePasswordDTO changePasswordDTO, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("changePasswordDTO", changePasswordDTO);
+            return "change-password";
+        }
+
+        if (!userService.verifyPassword(changePasswordDTO.getOldPassword())) {
+            result.rejectValue("oldPassword", "error.oldPassword", "Niepoprawnie wprowadzone stare hasło");
+            model.addAttribute("changePasswordDTO", changePasswordDTO);
+            return "change-password";
+        }
+
+        if (changePasswordDTO.getOldPassword().equals(changePasswordDTO.getNewPassword())) {
+            result.rejectValue("newPassword", "error.newPassword", "Stare hasło i nowe hasło muszą się różnić");
+            model.addAttribute("changePasswordDTO", changePasswordDTO);
+            return "change-password";
+        }
+
+        if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmPassword())) {
+            result.rejectValue("confirmPassword", "error.confirmPassword", "Hasła się różnią, proszę o poprawne powtórzenie hasła");
+            model.addAttribute("changePasswordDTO", changePasswordDTO);
+            return "change-password";
+        }
+
+        userService.changePassword(changePasswordDTO.getNewPassword());
 
         return "redirect:/user";
     }
