@@ -26,58 +26,60 @@
                 <c:if test="${errorSelf}">
                     <p style="color: red">Admin nie może usunąć samego siebie</p>
                 </c:if>
-                <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
-                    <thead>
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Imię</th>
-                        <th scope="col">Nazwisko</th>
-                        <th scope="col">E-mail</th>
-                        <th scope="col">Ilość podarunków</th>
-                        <th scope="col">Aktywny</th>
-                        <th scope="col">Zweryfikowany</th>
-                        <th scope="col">Funkcje</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${admins}" var="admin">
+                <div class="tableFixHead">
+                    <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
+                        <thead>
                         <tr>
-                            <td>${admin.id}</td>
-                            <td>${admin.firstName}</td>
-                            <td>${admin.lastName}</td>
-                            <td>${admin.email}</td>
-                            <td>${admin.donations.size()}</td>
-                            <td><c:choose>
-                                <c:when test="${admin.enabled == true}">
-                                    Tak
-                                </c:when>
-                                <c:otherwise>
-                                    Nie
-                                </c:otherwise>
-                            </c:choose></td>
-                            <td><c:choose>
-                                <c:when test="${admin.verified == true}">
-                                    Tak
-                                </c:when>
-                                <c:otherwise>
-                                    Nie
-                                </c:otherwise>
-                            </c:choose></td>
-                            <td>
-                                <a class="btn btn-primary" href="/admin/admins/edit-admin?id=${admin.id}">Edytuj</a>
-                                <form:form action="/admin/admins/remove-admin" method="post"
-                                           cssClass="d-flex justify-content-center m-2">
-                                    <input type="hidden" name="id" value="${admin.id}"/>
-                                    <input type="hidden" name="adminsCount" value="${admins.size()}">
-                                    <input type="submit" value="Usuń" class="btn btn-primary"
-                                           data-confirm-delete="Proszę potwierdzić usunięcie użytkownika ${admin.firstName} ${admin.lastName} ${admin.email}"
-                                           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"/>
-                                </form:form>
-                            </td>
+                            <th scope="col">Id</th>
+                            <th scope="col">Imię</th>
+                            <th scope="col">Nazwisko</th>
+                            <th scope="col">E-mail</th>
+                            <th scope="col">Ilość podarunków</th>
+                            <th scope="col">Aktywny</th>
+                            <th scope="col">Zweryfikowany</th>
+                            <th scope="col">Funkcje</th>
                         </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${admins}" var="admin">
+                            <tr>
+                                <td>${admin.id}</td>
+                                <td>${admin.firstName}</td>
+                                <td>${admin.lastName}</td>
+                                <td>${admin.email}</td>
+                                <td>${admin.donations.size()}</td>
+                                <td><c:choose>
+                                    <c:when test="${admin.enabled == true}">
+                                        Tak
+                                    </c:when>
+                                    <c:otherwise>
+                                        Nie
+                                    </c:otherwise>
+                                </c:choose></td>
+                                <td><c:choose>
+                                    <c:when test="${admin.verified == true}">
+                                        Tak
+                                    </c:when>
+                                    <c:otherwise>
+                                        Nie
+                                    </c:otherwise>
+                                </c:choose></td>
+                                <td>
+                                    <a class="btn btn-primary" href="/admin/admins/edit-admin?id=${admin.id}">Edytuj</a>
+                                    <form:form action="/admin/admins/remove-admin" method="post"
+                                               cssClass="d-flex justify-content-center m-2">
+                                        <input type="hidden" name="id" value="${admin.id}"/>
+                                        <input type="hidden" name="adminsCount" value="${admins.size()}">
+                                        <input type="submit" value="Usuń" class="btn btn-primary"
+                                               data-confirm-delete="Proszę potwierdzić usunięcie użytkownika ${admin.firstName} ${admin.lastName} ${admin.email}"
+                                               onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"/>
+                                    </form:form>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

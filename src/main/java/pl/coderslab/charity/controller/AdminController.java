@@ -93,7 +93,7 @@ public class AdminController {
 
     @GetMapping("/donations")
     public String showDonationsPage(Model model){
-        model.addAttribute("donations", donationService.getAllDonations());
+        model.addAttribute("donations", donationService.getAllDonationsOrderedByCollectedAscAndPickUpDateAsc());
         return "admin/all-donations";
     }
 

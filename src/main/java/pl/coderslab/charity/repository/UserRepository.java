@@ -1,6 +1,7 @@
 package pl.coderslab.charity.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.coderslab.charity.model.User;
 
@@ -16,5 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findUserById(Long id);
 
+    @Query("SELECT u FROM User u JOIN u.donations d WHERE d.id = :donationId")
+    User findByDonationId(Long donationId);
 
 }

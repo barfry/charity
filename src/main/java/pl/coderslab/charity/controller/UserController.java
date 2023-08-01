@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.coderslab.charity.dto.ChangePasswordDTO;
 import pl.coderslab.charity.dto.UserDTO;
+import pl.coderslab.charity.service.DonationService;
 import pl.coderslab.charity.service.UserService;
 
 import javax.validation.Valid;
@@ -17,9 +18,11 @@ public class UserController {
 
     @Autowired
     UserService userService;
+    DonationService donationService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, DonationService donationService) {
         this.userService = userService;
+        this.donationService = donationService;
     }
 
     @GetMapping("")
@@ -84,6 +87,25 @@ public class UserController {
         userService.changePassword(changePasswordDTO.getNewPassword());
 
         return "redirect:/user";
+    }
+
+    @GetMapping("/donations")
+    public String showUserDonationsPage(Model model){
+        model.addAttribute("donations", userService.getCurrentUserDonations());
+
+        return "user-donations";
+    }
+
+    @PostMapping("/donations/remove-donation")
+    public String removeDonation(@RequestParam(name = "id") Long id){
+        donationService.removeDonationFromUserByDonationId(id);
+        return "redirect:/user/donations";
+    }
+
+    @PostMapping("/donations/collect-donation")
+    public String collectDonation(@RequestParam(name = "id") Long id){
+        donationService.collectDonationById(id);
+        return "redirect:/user/donations";
     }
 
 

@@ -31,7 +31,7 @@
                 <ul class="dropdown">
                     <li><a href="/user">Profil</a></li>
                     <li><a href="/donate">Podaruj</a></li>
-                    <li><a href="#">Moje zbiórki</a></li>
+                    <li><a href="/user/donations">Moje zbiórki</a></li>
                     <sec:authorize access="hasRole('ROLE_ADMIN')">
                         <li><a href="/admin">Panel admina</a></li>
                     </sec:authorize>
