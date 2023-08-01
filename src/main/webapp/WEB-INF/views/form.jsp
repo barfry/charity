@@ -11,7 +11,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
-    <title>Document</title>
+    <title>Formularz podarunku</title>
     <link rel="stylesheet" href="<c:url value="${pageContext.request.contextPath}/resources/css/style.css"/>"/>
 </head>
 <body>
@@ -70,7 +70,11 @@
     <div class="form--steps-container">
         <div class="form--steps-counter">Krok <span>1</span>/4</div>
 
-        <form:form method="post" modelAttribute="donation" id="myForm">
+        <form:form method="post" modelAttribute="donation">
+            <div data-step="1" class="active">
+                <input type="hidden" name="hasErrors" value="${!empty requestScope['org.springframework.validation.BindingResult.donation']}"/>
+                <!-- Rest of the code ... -->
+            </div>
             <!-- STEP 1: class .active is switching steps -->
             <div data-step="1" class="active">
                 <h3>Zaznacz co chcesz oddać:</h3>
@@ -87,7 +91,7 @@
                         </label>
                     </div>
                 </c:forEach>
-                <form:errors path="categoryList" cssStyle="color: red"/>
+                <form:errors path="categoryList" cssStyle="color: red" class="form-group.error"/>
                 <div class="form-group form-group--buttons">
                     <button type="button" class="btn next-step">Dalej</button>
                 </div>
@@ -257,38 +261,7 @@
 <footer>
     <c:import url="fragments/footer.jsp"/>
 </footer>
-
 <script src="<c:url value="${pageContext.request.contextPath}/resources/js/app.js"/>"></script>
-<script>
-    function formSumUp() {
-        debugger
-
-        var categories = document.querySelectorAll('input[type="checkbox"]:checked');
-        var input = "";
-        for (var checkbox of categories) {
-            input += checkbox.title + ' '
-        }
-        var quantity = document.getElementById("quantity").value;
-        var institution = document.querySelector('input[name="institution"]:checked').title;
-        var street = document.getElementById("street").value;
-        var city = document.getElementById("city").value;
-        var zipCode = document.getElementById("zipCode").value;
-        var phoneNumber = document.getElementById("phoneNumber").value;
-        var pickUpDate = document.getElementById("pickUpDate").value;
-        var pickUpTime = document.getElementById("pickUpTime").value;
-        var pickUpComment = document.getElementById("pickUpComment").value;
-
-        document.getElementById("summary--quantity").innerHTML = quantity + " worki " + input;
-        document.getElementById("summary--institution").innerHTML = institution;
-        document.getElementById("summary--street").innerHTML = street;
-        document.getElementById("summary--city").innerHTML = city;
-        document.getElementById("summary--zipCode").innerHTML = zipCode;
-        document.getElementById("summary--phoneNumber").innerHTML = phoneNumber;
-        document.getElementById("summary--pickUpDate").innerHTML = pickUpDate;
-        document.getElementById("summary--pickUpTime").innerHTML = pickUpTime;
-        document.getElementById("summary--pickUpComment").innerHTML = pickUpComment;
-
-    }
-</script>
+<script src="<c:url value="${pageContext.request.contextPath}/resources/js/formSumUp.js"/>"></script>
 </body>
 </html>

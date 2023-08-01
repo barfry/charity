@@ -15,81 +15,85 @@
 <body>
 <div class="page-container">
     <div class="content-wrap">
-        <div class="row">
+        <div class="row" style="width: 100%">
             <div class="col-2">
                 <c:import url="fragments/sidebar.jsp"/>
             </div>
-            <div class="col-10">
+            <div class="col-10" >
                 <h1>Podarunki</h1>
-                <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
-                    <thead>
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Ilość</th>
-                        <th scope="col">Kategorie</th>
-                        <th scope="col">Fundacja</th>
-                        <th scope="col">Ulica</th>
-                        <th scope="col">Miasto</th>
-                        <th scope="col">Kod pocztowy</th>
-                        <th scope="col">Data odbioru</th>
-                        <th scope="col">Godzina odbioru</th>
-                        <th scope="col">Numer telefonu</th>
-                        <th scope="col">Komentarz</th>
-                        <th scope="col">Odebrano</th>
-                        <th scope="col">Funkcje</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${donations}" var="donation">
+                <div class="tableFixHead">
+                    <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
+                        <thead>
                         <tr>
-                            <td>${donation.id}</td>
-                            <td>${donation.quantity}</td>
-                            <td>
-                                <ul>
-                                    <c:forEach items="${donation.categoryList}" var="category">
-                                        <li>${category.name}</li>
-                                    </c:forEach>
-                                </ul>
-                            </td>
-                            <td>${donation.institution.name}</td>
-                            <td>${donation.street}</td>
-                            <td>${donation.city}</td>
-                            <td>${donation.zipCode}</td>
-                            <td>${donation.pickUpDate}</td>
-                            <td>${donation.pickUpTime}</td>
-                            <td>${donation.phoneNumber}</td>
-                            <td>${donation.pickUpComment}</td>
-                            <td><c:choose>
-                                <c:when test="${donation.collected == true}">
-                                    <fmt:parseDate value="${ donation.collectionDateTime}" pattern="y-M-dd'T'H:m" var="myParseDate"></fmt:parseDate>
-                                    <fmt:formatDate value="${myParseDate}"  pattern="dd.MM.yyyy HH:mm"></fmt:formatDate >
-                                </c:when>
-                                <c:otherwise>
-                                    Nie
-                                </c:otherwise>
-                            </c:choose></td>
-                            <td>
-                                <c:if test="${donation.collected == false}">
-                                    <form:form action="/admin/donations/collect-donation" method="post"
+                            <th scope="col">Id</th>
+                            <th scope="col">Ilość</th>
+                            <th scope="col">Kategorie</th>
+                            <th scope="col">Fundacja</th>
+                            <th scope="col">Ulica</th>
+                            <th scope="col">Miasto</th>
+                            <th scope="col">Kod pocztowy</th>
+                            <th scope="col">Data odbioru</th>
+                            <th scope="col">Godzina odbioru</th>
+                            <th scope="col">Numer telefonu</th>
+                            <th scope="col">Komentarz</th>
+                            <th scope="col">Odebrano</th>
+                            <th scope="col">Funkcje</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${donations}" var="donation">
+                            <tr>
+                                <td>${donation.id}</td>
+                                <td>${donation.quantity}</td>
+                                <td>
+                                    <ul>
+                                        <c:forEach items="${donation.categoryList}" var="category">
+                                            <li>${category.name}</li>
+                                        </c:forEach>
+                                    </ul>
+                                </td>
+                                <td>${donation.institution.name}</td>
+                                <td>${donation.street}</td>
+                                <td>${donation.city}</td>
+                                <td>${donation.zipCode}</td>
+                                <td>${donation.pickUpDate}</td>
+                                <td>${donation.pickUpTime}</td>
+                                <td>${donation.phoneNumber}</td>
+                                <td>${donation.pickUpComment}</td>
+                                <td><c:choose>
+                                    <c:when test="${donation.collected == true}">
+                                        <fmt:parseDate value="${ donation.collectionDateTime}" pattern="y-M-dd'T'H:m"
+                                                       var="myParseDate"></fmt:parseDate>
+                                        <fmt:formatDate value="${myParseDate}"
+                                                        pattern="dd.MM.yyyy HH:mm"></fmt:formatDate>
+                                    </c:when>
+                                    <c:otherwise>
+                                        Nie
+                                    </c:otherwise>
+                                </c:choose></td>
+                                <td>
+                                    <c:if test="${donation.collected == false}">
+                                        <form:form action="/admin/donations/collect-donation" method="post"
+                                                   cssClass="d-flex justify-content-center">
+                                            <input type="hidden" name="id" value="${donation.id}"/>
+                                            <input type="submit" value="Oznacz jako odebrane" class="btn btn-primary"
+                                                   data-confirm-collect="Proszę potwierdzić odebranie podarunku id: ${donation.id}"
+                                                   onclick="if (!confirm(this.getAttribute('data-confirm-collect'))) return false"/>
+                                        </form:form>
+                                    </c:if>
+                                    <form:form action="/admin/donations/remove-donation" method="post"
                                                cssClass="d-flex justify-content-center">
                                         <input type="hidden" name="id" value="${donation.id}"/>
-                                        <input type="submit" value="Oznacz jako odebrane" class="btn btn-primary"
-                                               data-confirm-collect="Proszę potwierdzić odebranie podarunku id: ${donation.id}"
-                                               onclick="if (!confirm(this.getAttribute('data-confirm-collect'))) return false"/>
+                                        <input type="submit" value="Usuń" class="btn btn-primary"
+                                               data-confirm-delete="Proszę potwierdzić usunięcie podarunku id: ${donation.id}"
+                                               onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"/>
                                     </form:form>
-                                </c:if>
-                                <form:form action="/admin/donations/remove-donation" method="post"
-                                           cssClass="d-flex justify-content-center">
-                                    <input type="hidden" name="id" value="${donation.id}"/>
-                                    <input type="submit" value="Usuń" class="btn btn-primary"
-                                           data-confirm-delete="Proszę potwierdzić usunięcie podarunku id: ${donation.id}"
-                                           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"/>
-                                </form:form>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

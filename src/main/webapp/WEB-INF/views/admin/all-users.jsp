@@ -19,77 +19,85 @@
             </div>
             <div class="col-10">
                 <h1>Użytkownicy</h1>
-                <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
-                    <thead>
-                    <tr>
-                        <th scope="col">Id</th>
-                        <th scope="col">Imię</th>
-                        <th scope="col">Nazwisko</th>
-                        <th scope="col">E-mail</th>
-                        <th scope="col">Ilość podarunków</th>
-                        <th scope="col">Aktywny</th>
-                        <th scope="col">Zweryfikowany</th>
-                        <th scope="col">Funkcje</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${users}" var="user">
+                <div class="tableFixHead">
+                    <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
+                        <thead>
                         <tr>
-                            <td>${user.id}</td>
-                            <td>${user.firstName}</td>
-                            <td>${user.lastName}</td>
-                            <td>${user.email}</td>
-                            <td>${user.donations.size()}</td>
-                            <td><c:choose>
-                                <c:when test="${user.enabled == true}">
-                                    Tak
-                                </c:when>
-                                <c:otherwise>
-                                    Nie
-                                </c:otherwise>
-                            </c:choose></td>
-                            <td><c:choose>
-                                <c:when test="${user.verified == true}">
-                                    Tak
-                                </c:when>
-                                <c:otherwise>
-                                    Nie
-                                </c:otherwise>
-                            </c:choose></td>
-                            <td>
-                                <a class="btn btn-primary" href="/admin/users/edit-user?id=${user.id}">Edytuj</a>
-                                <form:form action="/admin/users/remove-user" method="post"
-                                           cssClass="d-flex justify-content-center m-2">
-                                    <input type="hidden" name="id" value="${user.id}"/>
-                                    <input type="submit" value="Usuń" class="btn btn-primary"
-                                           data-confirm-delete="Proszę potwierdzić usunięcie użytkownika ${user.firstName} ${user.lastName} ${user.email}"
-                                           onclick="if (!confirm(this.getAttribute('data-confirm-delete'))) return false"/>
-                                </form:form>
-                                <c:choose>
+                            <th scope="col">Id</th>
+                            <th scope="col">Imię</th>
+                            <th scope="col">Nazwisko</th>
+                            <th scope="col">E-mail</th>
+                            <th scope="col">Ilość podarunków</th>
+                            <th scope="col">Aktywny</th>
+                            <th scope="col">Zweryfikowany</th>
+                            <th scope="col">Funkcje</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach items="${users}" var="user">
+                            <tr>
+                                <td>${user.id}</td>
+                                <td>${user.firstName}</td>
+                                <td>${user.lastName}</td>
+                                <td>${user.email}</td>
+                                <td>${user.donations.size()}</td>
+                                <td><c:choose>
                                     <c:when test="${user.enabled == true}">
-                                        <form:form action="/admin/users/block-user" method="post"
-                                                   cssClass="d-flex justify-content-center m-2">
-                                            <input type="hidden" name="id" value="${user.id}"/>
-                                            <input type="submit" value="Zablokuj" class="btn btn-primary"
-                                                   data-confirm-block="Proszę potwierdzić zablokowanie użytkownika ${user.firstName} ${user.lastName} ${user.email}"
-                                                   onclick="if (!confirm(this.getAttribute('data-confirm-block'))) return false"/>
-                                        </form:form>
+                                        Tak
                                     </c:when>
                                     <c:otherwise>
-                                        <form:form action="/admin/users/unblock-user" method="post"
-                                                   cssClass="d-flex justify-content-center m-2">
-                                            <input type="hidden" name="id" value="${user.id}"/>
-                                            <input type="submit" value="Odblokuj" class="btn btn-primary"
-                                                   data-confirm-unblock="Proszę potwierdzić odblokowanie użytkownika ${user.firstName} ${user.lastName} ${user.email}"
-                                                   onclick="if (!confirm(this.getAttribute('data-confirm-unblock'))) return false"/>
-                                        </form:form>
+                                        Nie
                                     </c:otherwise>
-                                </c:choose>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
+                                </c:choose></td>
+                                <td><c:choose>
+                                    <c:when test="${user.verified == true}">
+                                        Tak
+                                    </c:when>
+                                    <c:otherwise>
+                                        Nie
+                                    </c:otherwise>
+                                </c:choose></td>
+                                <td>
+                                    <a class="btn btn-primary" href="/admin/users/edit-user?id=${user.id}">Edytuj</a>
+                                    <form:form action="/admin/users/remove-user" method="post"
+                                               cssClass="d-flex justify-content-center m-2">
+                                        <input type="hidden" name="id" value="${user.id}"/>
+                                        <input type="submit" value="Usuń" class="btn btn-primary"
+                                               data-confirm-delete="Proszę potwierdzić usunięcie użytkownika
+                                               ${user.firstName} ${user.lastName} ${user.email}"
+                                               onclick="if (!confirm(this.getAttribute('data-confirm-delete')))
+                                                   return false"/>
+                                    </form:form>
+                                    <c:choose>
+                                        <c:when test="${user.enabled == true}">
+                                            <form:form action="/admin/users/block-user" method="post"
+                                                       cssClass="d-flex justify-content-center m-2">
+                                                <input type="hidden" name="id" value="${user.id}"/>
+                                                <input type="submit" value="Zablokuj" class="btn btn-primary"
+                                                       data-confirm-block="Proszę potwierdzić zablokowanie użytkownika
+                                                       ${user.firstName} ${user.lastName} ${user.email}"
+                                                       onclick="if (!confirm(this.getAttribute('data-confirm-block')))
+                                                           return false"/>
+                                            </form:form>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <form:form action="/admin/users/unblock-user" method="post"
+                                                       cssClass="d-flex justify-content-center m-2">
+                                                <input type="hidden" name="id" value="${user.id}"/>
+                                                <input type="submit" value="Odblokuj" class="btn btn-primary"
+                                                       data-confirm-unblock="Proszę potwierdzić odblokowanie użytkownika
+                                                       ${user.firstName} ${user.lastName} ${user.email}"
+                                                       onclick="if (!confirm(this.getAttribute('data-confirm-unblock')))
+                                                           return false"/>
+                                            </form:form>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

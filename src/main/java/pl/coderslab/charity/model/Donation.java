@@ -23,10 +23,11 @@ public class Donation {
     @NotNull(message = "To pole nie może być puste")
     private Integer quantity;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "donation_categories", joinColumns =
         @JoinColumn(name = "donation_id"), inverseJoinColumns =
             @JoinColumn(name = "category_id"))
+    @OrderBy("id")
     @NotNull(message = "Należy wybrać co najmniej jedną kategorię")
     private List<Category> categoryList;
 
@@ -65,7 +66,7 @@ public class Donation {
 
     @NotNull
     @NotBlank(message = "To pole nie może być puste")
-    @Length(min = 3, max = 50, message = "Komentarz musi zawierać się między 2 a 50 znakami")
+    @Length(min = 2, max = 50, message = "Komentarz musi zawierać się między 2 a 50 znakami")
     private String pickUpComment;
 
     private Boolean collected;

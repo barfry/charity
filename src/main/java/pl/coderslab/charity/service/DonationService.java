@@ -40,8 +40,16 @@ public class DonationService {
         }
     }
 
+    public List<Donation> getAllDonationsForCurrentUser(){
+        return userService.getCurrentUser().getDonations();
+    }
+
     public List<Donation> getAllDonations(){
         return donationRepository.findAll();
+    }
+
+    public void removeDonationFromUserByDonationId(Long id){
+        userService.removeDonationFromUser(donationRepository.getOne(id));
     }
 
     public void removeDonationById(Long id){
@@ -50,5 +58,9 @@ public class DonationService {
 
     public void collectDonationById(Long id){
         donationRepository.markDonationAsCollected(id);
+    }
+
+    public List<Donation> getAllDonationsOrderedByCollectedAscAndPickUpDateAsc(){
+        return donationRepository.findAllOrderedByCollectedAndPickUpDate();
     }
 }

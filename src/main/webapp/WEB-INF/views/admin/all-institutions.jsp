@@ -20,6 +20,7 @@
             <div class="col-10">
                 <h1>Fundacje</h1>
                 <a class="btn btn-primary my-4" href="/admin/institutions/add-new-institution">Dodaj nową fundację</a>
+                <div class="tableFixHead">
                 <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
                     <thead>
                     <tr>
@@ -49,6 +50,7 @@
                     </c:forEach>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>

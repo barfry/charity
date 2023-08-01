@@ -138,11 +138,11 @@ public class UserService implements UserDetailsService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("mycharityapp@outlook.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-            message.setSubject("Email Verification");
+            message.setSubject("Weryfikacja e-mail");
             String verificationLink = "http://localhost:8080/verify?token=" + verificationToken;
             String messageContent = "Kliknij w link aby zweryfikować swój adres e-mail: <a href='" + verificationLink + "'>" + verificationLink + "</a>";
             message.setContent(messageContent, "text/html");
-            message.setHeader("Content-Type", "text/html; charset=ISO-8859-2");
+            message.setHeader("Content-Type", "text/html;charset=UTF-8");
 
             Transport.send(message);
         } catch (MessagingException e) {
@@ -169,7 +169,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void addNewDonationToUser(Donation donation) {
-        User user = getCurrentUser();
+        User user = userRepository.findUserById(getCurrentUser().getId());
         user.getDonations().add(donation);
         userRepository.save(user);
     }
@@ -290,5 +290,17 @@ public class UserService implements UserDetailsService {
         user.setPassword(encodedPassword);
 
         userRepository.save(user);
+    }
+
+    public List<Donation> getCurrentUserDonations(){
+        return userRepository.findUserById(getCurrentUser().getId()).getDonations();
+    }
+
+    public void removeDonationFromUser(Donation donation) {
+        User user = userRepository.findByDonationId(donation.getId());
+        if (user != null) {
+            user.getDonations().remove(donation);
+            userRepository.save(user);
+        }
     }
 }
