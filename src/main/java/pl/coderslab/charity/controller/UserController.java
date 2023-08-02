@@ -11,6 +11,8 @@ import pl.coderslab.charity.service.DonationService;
 import pl.coderslab.charity.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @Controller
 @RequestMapping("/user")
@@ -107,6 +109,4 @@ public class UserController {
         donationService.collectDonationById(id);
         return "redirect:/user/donations";
     }
-
-
 }

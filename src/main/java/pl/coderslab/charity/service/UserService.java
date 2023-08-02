@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 import pl.coderslab.charity.dto.UserDTO;
 import pl.coderslab.charity.exception.UserNotVerifiedException;
@@ -24,8 +23,12 @@ import javax.annotation.Resource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -269,13 +272,11 @@ public class UserService implements UserDetailsService {
         roleService.assignAdminRole(user);
         userRepository.save(user);
 
-        // Create a verification token entity and associate it with the user
         VerificationToken tokenEntity = new VerificationToken();
         tokenEntity.setToken(verificationToken);
         tokenEntity.setUser(user);
         verificationTokenRepository.save(tokenEntity);
 
-        // Send verification email to the user
         sendVerificationEmail(user.getEmail(), verificationToken);
     }
 
@@ -303,4 +304,68 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
         }
     }
+
+    @Transactional
+    public void initiatePasswordReset(@NotBlank @Email String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new IllegalArgumentException("User with provided email not found.");
+        }
+
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        userRepository.save(user);
+
+        sendPasswordResetEmail(user.getEmail(), token);
+    }
+
+    private void sendPasswordResetEmail(String email, String token) {
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "smtp.office365.com");
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+
+        // SMTP username and password
+        String username = "mycharityapp@outlook.com";
+        String password = "bl4bl4bl4";
+
+
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("mycharityapp@outlook.com"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            message.setSubject("Reset hasła - CharityApp");
+            String verificationLink = "http://localhost:8080/reset-password?token=" + token;
+            String messageContent = "Kliknij w link aby zresetować swoje hasło: <a href='" + verificationLink + "'>" + verificationLink + "</a>";
+            message.setContent(messageContent, "text/html");
+            message.setHeader("Content-Type", "text/html;charset=UTF-8");
+
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void resetPassword(String token, @NotBlank String newPassword) {
+        User user = userRepository.findByVerificationToken(token);
+        if (user == null) {
+            throw new IllegalArgumentException("Invalid token.");
+        }
+
+        // Set the new password and remove the reset token (use verificationToken property)
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setVerificationToken(null);
+        userRepository.save(user);
+    }
+
 }

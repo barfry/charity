@@ -20,4 +20,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN u.donations d WHERE d.id = :donationId")
     User findByDonationId(Long donationId);
 
+    User findByVerificationToken(String token);
 }

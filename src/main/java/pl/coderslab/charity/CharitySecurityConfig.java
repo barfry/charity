@@ -61,9 +61,9 @@ public class CharitySecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/user/**").hasAuthority("ROLE_USER")
                 .antMatchers("/**").permitAll()
+                .antMatchers("/user/**").hasAuthority("ROLE_USER")
+                .antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

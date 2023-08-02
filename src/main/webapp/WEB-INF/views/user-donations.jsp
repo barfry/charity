@@ -22,7 +22,6 @@
             <h1>
                 Podarunki
             </h1>
-
             <div class="donations" style="height: 60vh; overflow-y: scroll">
                 <table class="table">
                     <thead>
@@ -64,8 +63,9 @@
                             <td>${donation.pickUpComment}</td>
                             <td><c:choose>
                                 <c:when test="${donation.collected == true}">
-                                    <fmt:parseDate value="${ donation.collectionDateTime}" pattern="y-M-dd'T'H:m" var="myParseDate"></fmt:parseDate>
-                                    <fmt:formatDate value="${myParseDate}"  pattern="dd.MM.yyyy HH:mm"></fmt:formatDate >
+                                    <fmt:parseDate value="${ donation.collectionDateTime}" pattern="y-M-dd'T'H:m"
+                                                   var="myParseDate"></fmt:parseDate>
+                                    <fmt:formatDate value="${myParseDate}"  pattern="dd.MM.yyyy HH:mm"></fmt:formatDate>
                                 </c:when>
                                 <c:otherwise>
                                     Nie
