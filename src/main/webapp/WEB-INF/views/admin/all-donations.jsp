@@ -62,7 +62,7 @@
                                 <td>${donation.pickUpComment}</td>
                                 <td><c:choose>
                                     <c:when test="${donation.collected == true}">
-                                        <fmt:parseDate value="${ donation.collectionDateTime}" pattern="y-M-dd'T'H:m"
+                                        <fmt:parseDate value="${donation.collectionDateTime}" pattern="y-M-dd'T'H:m"
                                                        var="myParseDate"></fmt:parseDate>
                                         <fmt:formatDate value="${myParseDate}"
                                                         pattern="dd.MM.yyyy HH:mm"></fmt:formatDate>

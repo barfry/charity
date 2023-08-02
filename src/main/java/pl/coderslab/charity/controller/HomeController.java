@@ -8,6 +8,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import pl.coderslab.charity.dto.ChangePasswordDTO;
 import pl.coderslab.charity.model.User;
 import pl.coderslab.charity.service.DonationService;
 import pl.coderslab.charity.service.InstitutionService;
@@ -15,6 +17,8 @@ import pl.coderslab.charity.service.RoleService;
 import pl.coderslab.charity.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @Controller
 @RequestMapping("")
@@ -73,5 +77,50 @@ public class HomeController {
     public String loginError(Model model) {
         model.addAttribute("loginError", true);
         return "login";
+    }
+
+    @GetMapping("/initiate-reset-password")
+    public String initResetPassword(){
+
+        return "reset-password-email";
+    }
+
+    @PostMapping("/initiate-reset-password")
+    public String initiatePasswordReset(@RequestParam("email") @NotBlank @Email String email, Model model) {
+        try {
+            userService.initiatePasswordReset(email);
+            model.addAttribute("successMessage", "Na podany adres e-mail wysłano link do zresetowania hasła");
+            return "login";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", "Podany adres e-mail nie odnaleziony");
+            return "reset-password-email";
+        }
+    }
+
+    @GetMapping("/reset-password")
+    public String initNewPasswordForm(@RequestParam(name = "token") String token, Model model){
+        model.addAttribute("changePasswordDTO", new ChangePasswordDTO());
+        model.addAttribute("token", token);
+        return "reset-password-form";
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestParam("token") String token, @Valid ChangePasswordDTO changePasswordDTO, BindingResult result, Model model) {
+        if(result.hasErrors() || !changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmPassword())) {
+            model.addAttribute("changePasswordDTO", changePasswordDTO);
+            if (!changePasswordDTO.getNewPassword().equals(changePasswordDTO.getConfirmPassword())) {
+                result.rejectValue("confirmPassword", "error.confirmPassword", "Hasła się różnią, proszę o poprawne powtórzenie hasła");
+            }
+            model.addAttribute("token", token);
+            return "reset-password-form";
+        }
+        try {
+            userService.resetPassword(token, changePasswordDTO.getNewPassword());
+            model.addAttribute("successMessage", "Reset hasła zatwierdzony");
+            return "login";
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("errorMessage", "Link resetu hasła wygasł");
+            return "login";
+        }
     }
 }
