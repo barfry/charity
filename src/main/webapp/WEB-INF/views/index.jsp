@@ -16,6 +16,9 @@
 <header class="header--main-page">
     <c:import url="fragments/header.jsp"/>
     <div class="slogan container container--90">
+        <c:if test="${successMessage}">
+            <p style="color: green">Wiadmość wysłana pomyślnie</p>
+        </c:if>
         <div class="slogan--item">
             <h1>
                 Zacznij pomagać!<br />

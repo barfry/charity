@@ -21,7 +21,7 @@
             </div>
             <div class="col-10" >
                 <h1>Podarunki</h1>
-                <div class="tableFixHead">
+                <div class="tableFixHeadAdmin">
                     <table class="table table-sm table-hover table-dark table-bordered text-center table-responsive">
                         <thead>
                         <tr>
