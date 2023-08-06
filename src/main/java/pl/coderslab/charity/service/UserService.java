@@ -2,6 +2,7 @@ package pl.coderslab.charity.service;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import pl.coderslab.charity.dto.MessageDTO;
 import pl.coderslab.charity.dto.UserDTO;
 import pl.coderslab.charity.exception.UserNotVerifiedException;
 import pl.coderslab.charity.model.Donation;
@@ -48,6 +50,19 @@ public class UserService implements UserDetailsService {
 
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    @Value("${spring.mail.host}")
+    private String smtpHost;
+
+    @Value("${spring.mail.port}")
+    private int smtpPort;
+
+    @Value("${spring.mail.username}")
+    private String emailUsername;
+
+    @Value("${spring.mail.password}")
+    private String emailPassword;
+
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         pl.coderslab.charity.model.User user = userRepository.findByEmail(email);
@@ -69,15 +84,6 @@ public class UserService implements UserDetailsService {
     }
 
     public UserService() {
-    }
-
-    public pl.coderslab.charity.model.User saveNewUser(pl.coderslab.charity.model.User user) {
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-
-        roleService.assignUserRole(user);
-        return userRepository.save(user);
     }
 
     public Boolean checkIfEmailExists(pl.coderslab.charity.model.User user) {
@@ -102,13 +108,11 @@ public class UserService implements UserDetailsService {
         roleService.assignUserRole(user);
         userRepository.save(user);
 
-        // Create a verification token entity and associate it with the user
         VerificationToken tokenEntity = new VerificationToken();
         tokenEntity.setToken(verificationToken);
         tokenEntity.setUser(user);
         verificationTokenRepository.save(tokenEntity);
 
-        // Send verification email to the user
         sendVerificationEmail(user.getEmail(), verificationToken);
     }
 
@@ -116,30 +120,24 @@ public class UserService implements UserDetailsService {
         return RandomStringUtils.randomAlphanumeric(64);
     }
 
-    // Send verification email
     private void sendVerificationEmail(String email, String verificationToken) {
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.office365.com");
-        properties.put("mail.smtp.port", "587");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", smtpHost);
+        props.put("mail.smtp.port", smtpPort);
 
-        // SMTP username and password
-        String username = "mycharityapp@outlook.com";
-        String password = "bl4bl4bl4";
-
-
-        Session session = Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(emailUsername, emailPassword);
+                    }
+                });
 
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("mycharityapp@outlook.com"));
+            message.setFrom(new InternetAddress(emailUsername));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
             message.setSubject("Weryfikacja e-mail");
             String verificationLink = "http://localhost:8080/verify?token=" + verificationToken;
@@ -185,7 +183,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserById(id);
     }
 
-    public UserDTO getUserDtoByUserId(Long id){
+    public UserDTO getUserDtoByUserId(Long id) {
         User user = getUserById(id);
         UserDTO userDto = new UserDTO();
 
@@ -197,7 +195,7 @@ public class UserService implements UserDetailsService {
         return userDto;
     }
 
-    public UserDTO getCurrentUserDto(){
+    public UserDTO getCurrentUserDto() {
         User user = getCurrentUser();
         UserDTO userDto = new UserDTO();
 
@@ -237,23 +235,27 @@ public class UserService implements UserDetailsService {
 
     }
 
-    public void blockUserById(Long id){
+    public void blockUserById(Long id) {
         User user = getUserById(id);
         user.setEnabled(false);
         userRepository.save(user);
     }
 
-    public void unblockUserById(Long id){
+    public void unblockUserById(Long id) {
         User user = getUserById(id);
         user.setEnabled(true);
         userRepository.save(user);
     }
 
-    public void removeUserById(Long id){
+    public void removeUserById(Long id) {
+        VerificationToken verificationToken = userRepository.findVerificationTokenByUserId(id);
+        if (verificationToken != null) {
+            verificationTokenRepository.delete(verificationToken);
+        }
         userRepository.deleteById(id);
     }
 
-    public List<User> getAllUserByRole(String roleName){
+    public List<User> getAllUserByRole(String roleName) {
         return userRepository.findByRoles_Name(roleName);
     }
 
@@ -280,12 +282,12 @@ public class UserService implements UserDetailsService {
         sendVerificationEmail(user.getEmail(), verificationToken);
     }
 
-    public Boolean verifyPassword(String oldPassword){
+    public Boolean verifyPassword(String oldPassword) {
         User user = getCurrentUser();
         return passwordEncoder.matches(oldPassword, user.getPassword());
     }
 
-    public void changePassword(String newPassword){
+    public void changePassword(String newPassword) {
         User user = getCurrentUser();
         String encodedPassword = passwordEncoder.encode(newPassword);
         user.setPassword(encodedPassword);
@@ -293,7 +295,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public List<Donation> getCurrentUserDonations(){
+    public List<Donation> getCurrentUserDonations() {
         return userRepository.findUserById(getCurrentUser().getId()).getDonations();
     }
 
@@ -320,23 +322,18 @@ public class UserService implements UserDetailsService {
     }
 
     private void sendPasswordResetEmail(String email, String token) {
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.office365.com");
-        properties.put("mail.smtp.port", "587");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", smtpHost);
+        props.put("mail.smtp.port", smtpPort);
 
-        // SMTP username and password
-        String username = "mycharityapp@outlook.com";
-        String password = "bl4bl4bl4";
-
-
-        Session session = Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(emailUsername, emailPassword);
+                    }
+                });
 
         try {
 
@@ -366,6 +363,36 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setVerificationToken(null);
         userRepository.save(user);
+    }
+
+
+    public void sendMessageFromUser(MessageDTO messageDTO) {
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", smtpHost);
+        props.put("mail.smtp.port", smtpPort);
+
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(emailUsername, emailPassword);
+                    }
+                });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(emailUsername));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailUsername));
+            message.setSubject("Message from: " + messageDTO.getFirstName() + " " + messageDTO.getLastName());
+            message.setText(messageDTO.getMessage());
+
+            Transport.send(message);
+
+            System.out.println("Email sent successfully!");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
 }

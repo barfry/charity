@@ -2,8 +2,10 @@ package pl.coderslab.charity.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import pl.coderslab.charity.model.User;
+import pl.coderslab.charity.model.VerificationToken;
 
 import java.util.List;
 
@@ -21,4 +23,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByDonationId(Long donationId);
 
     User findByVerificationToken(String token);
+
+    @Query("SELECT v FROM VerificationToken v WHERE v.user.id = :userId")
+    VerificationToken findVerificationTokenByUserId(@Param("userId") Long userId);
+
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import pl.coderslab.charity.dto.ChangePasswordDTO;
+import pl.coderslab.charity.dto.MessageDTO;
 import pl.coderslab.charity.model.User;
 import pl.coderslab.charity.service.DonationService;
 import pl.coderslab.charity.service.InstitutionService;
@@ -42,6 +43,7 @@ public class HomeController {
             model.addAttribute("allInstitutions", institutionService.getAllInstitutions());
             model.addAttribute("sumDonationsQuantity", donationService.sumDonationsQuantity());
             model.addAttribute("sumDonations", donationService.sumDonations());
+            model.addAttribute("messageDTO", new MessageDTO());
         return "index";
     }
 
@@ -123,4 +125,16 @@ public class HomeController {
             return "login";
         }
     }
+
+    @PostMapping("/message-us")
+    public String messageUsMail(@Valid MessageDTO messageDTO, BindingResult result, Model model){
+        if(result.hasErrors()){
+            model.addAttribute("messageDTO", messageDTO);
+            return "index";
+        }
+
+        userService.sendMessageFromUser(messageDTO);
+        return "redirect:";
+    }
+
 }
