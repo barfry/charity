@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findUserById(Long id);
 
     @Query("SELECT u FROM User u JOIN u.donations d WHERE d.id = :donationId")
-    User findByDonationId(Long donationId);
+    User findUserByDonationId(Long donationId);
 
     User findByVerificationToken(String token);
 
