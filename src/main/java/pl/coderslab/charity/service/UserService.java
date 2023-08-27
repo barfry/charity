@@ -300,7 +300,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void removeDonationFromUser(Donation donation) {
-        User user = userRepository.findByDonationId(donation.getId());
+        User user = userRepository.findUserByDonationId(donation.getId());
         if (user != null) {
             user.getDonations().remove(donation);
             userRepository.save(user);
