@@ -30,7 +30,6 @@ public class UserController {
     @GetMapping("")
     public String showUserProfilePage(Model model){
         model.addAttribute("userDto", userService.getCurrentUserDto());
-
         return "user-profile";
     }
 

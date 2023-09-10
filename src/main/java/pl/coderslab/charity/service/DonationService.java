@@ -40,14 +40,6 @@ public class DonationService {
         }
     }
 
-    public List<Donation> getAllDonationsForCurrentUser(){
-        return userService.getCurrentUser().getDonations();
-    }
-
-    public List<Donation> getAllDonations(){
-        return donationRepository.findAll();
-    }
-
     public void removeDonationFromUserByDonationId(Long id){
         userService.removeDonationFromUser(donationRepository.getOne(id));
     }
